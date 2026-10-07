@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&display=swap" rel="stylesheet">
+<style>.site-credit{padding:14px 30px 20px;text-align:right;color:var(--muted);font-family:'Darumadrop One',sans-serif;font-size:18px}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
+<title>ProLeague // CS2 Stats</title>
+<style>
+:root{--main:#e5a93d;--bg:#0b0e13;--panel:#131923;--panel2:#1a2230;--text:#edf1f7;--muted:#8995a8;--line:#283243;--good:#45d59b;--danger:#f26c76}
+body.cloud-locked .app{visibility:hidden}#cloudGate{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:#101820;color:#e7edf0;font-family:'Roboto Condensed','Arial Narrow',Arial,sans-serif}#cloudGate[hidden]{display:none}.cloud-card{width:min(440px,100%);padding:24px;background:#19242d;border:1px solid #2c3b45;border-radius:4px}.cloud-card h1{margin:0 0 5px;font-size:26px}.cloud-card p{color:#a2afb5;line-height:1.5}.cloud-field{margin:14px 0}.cloud-field label{display:block;margin-bottom:6px;color:#9ba8ae;font-size:11px;text-transform:uppercase}.cloud-field input{width:100%;padding:11px;background:#111b22;border:1px solid #34454f;border-radius:3px;color:#e7edf0}.cloud-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.cloud-actions button,.cloud-account button,.cloud-import button{padding:9px 12px;border:1px solid #4d8478;border-radius:3px;background:transparent;color:#a5d9c9;font-weight:700;cursor:pointer}.cloud-actions button.primary{background:#77c9b3;color:#102019}.cloud-message{min-height:22px;color:#a5d9c9;font-size:13px}.cloud-account{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:-8px 0 14px;color:var(--muted);font-size:12px}.cloud-account strong{color:var(--text)}.cloud-import{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;padding:12px;border:1px solid var(--line);background:var(--panel2);color:var(--text)}.cloud-import[hidden]{display:none}.cloud-viewer #transferForm,.cloud-viewer #playerForm,.cloud-viewer #registerPlayerForm,.cloud-viewer #matchForm,.cloud-viewer #playerEditForm,.cloud-viewer .remove,.cloud-viewer .fixture-actions,.cloud-viewer #themeForm{display:none!important}.cloud-viewer #fixtureRows input{pointer-events:none;opacity:.7}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Arial,sans-serif}button,input,select{font:inherit}.app{display:flex;min-height:100vh}.side{width:240px;background:#0e121a;border-right:1px solid var(--line);padding:22px 14px;flex-shrink:0}.brand{font-size:22px;font-weight:800;letter-spacing:-1px;padding:0 12px 25px}.brand b{color:var(--main)}.season{margin:0 8px 22px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:7px;color:var(--muted);font-size:11px;text-transform:uppercase}.season strong{display:block;color:var(--text);font-size:14px;margin-top:4px}.nav{color:var(--muted);font-weight:700;text-transform:uppercase;font-size:11px;padding:18px 12px 8px}.nav button{display:block;width:100%;border:1px solid transparent;background:transparent;color:var(--muted);text-align:left;padding:11px 12px;border-radius:6px;cursor:pointer;margin:2px 0}.nav button:hover,.nav button.active{background:var(--main);color:#14120d;font-weight:800}.main{max-width:1400px;flex:1;padding:28px 34px;overflow:auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.eyebrow{color:var(--main);font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase}.title{font-size:30px;font-weight:800;margin:5px 0}.sub{color:var(--muted)}.actions{display:flex;gap:9px}.btn{border:1px solid var(--main);background:transparent;color:var(--main);padding:10px 14px;border-radius:5px;cursor:pointer;font-weight:700}.btn:hover,.btn.primary{background:var(--main);border-color:var(--main);color:#14120d}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:18px}.stat{color:var(--muted);font-size:12px}.number{font-size:27px;font-weight:800;margin-top:7px}.section{background:var(--panel);border:1px solid var(--line);border-radius:7px;margin-bottom:18px;overflow:hidden}.sectionhead{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.sectionhead h2{font-size:16px;margin:0}table{width:100%;border-collapse:collapse;text-align:left}th{color:var(--muted);font-size:11px;text-transform:uppercase;font-weight:600}th,td{padding:13px 16px;border-bottom:1px solid var(--line)}tr:last-child td{border:0}.team{display:flex;align-items:center;gap:11px;font-weight:bold}.logo{width:34px;height:34px;border-radius:50%;display:block;object-fit:contain;background:#0d121a;border:1px solid var(--line);padding:4px}.badge{padding:4px 7px;background:#202b36;border-radius:4px;color:var(--good);font-size:11px}.content{display:none}.content.active{display:block}.form{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;padding:18px}.field label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;margin-bottom:6px}.field input,.field select{width:100%;padding:11px;background:#0d121a;color:var(--text);border:1px solid var(--line);border-radius:4px}.field.full{grid-column:1/-1}.empty{padding:35px;text-align:center;color:var(--muted)}.color input{width:52px;height:34px;padding:0;border:0;background:none}.color label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}.rank-S{color:#ffd45a}.rank-A{color:#d9dde5}.rank-B{color:#d89355}.rank-C{color:#69aef5}.rank-D{color:#f26c76}.remove{border:1px solid var(--danger);color:var(--danger);background:transparent;padding:6px 9px;border-radius:4px;cursor:pointer}.remove:hover{background:var(--danger);color:#fff}.team-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:18px}.team-card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:14px;text-align:left;color:var(--text);cursor:pointer;transition:all .18s ease}.team-card:hover,.team-card.selected{border-color:var(--main);box-shadow:0 0 0 1px rgba(229,169,61,.3)}.team-card__head{display:flex;align-items:center;gap:10px}.team-card__meta{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.point-pill{padding:5px 8px;background:rgba(69,213,155,.12);border:1px solid rgba(69,213,155,.35);border-radius:999px;color:var(--good);font-weight:700}.team-card__players{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.55}.team-profile{padding:18px}.team-profile__header{display:flex;align-items:center;gap:18px;padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--panel2)}.team-hero{width:60px;height:60px}.team-profile__body{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;margin-top:18px}.panel{background:var(--panel2);border:1px solid var(--line);border-radius:7px;padding:16px}.panel h3{margin:0 0 12px;font-size:15px}.team-players,.team-transfers{list-style:none;padding:0;margin:0;display:grid;gap:10px}.team-players li,.team-transfers li{display:flex;justify-content:space-between;align-items:center;background:#0d121a;border:1px solid var(--line);padding:10px 12px;border-radius:6px}.team-transfers li{display:block}.team-transfers small{display:block;color:var(--muted);margin-top:4px}.team-transfers strong{display:block;font-size:13px}.kda{font-variant-numeric:tabular-nums}.player-form{grid-template-columns:repeat(4,1fr)}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.form,.player-form{grid-template-columns:repeat(2,1fr)}.team-grid{grid-template-columns:repeat(2,1fr)}.team-profile__body{grid-template-columns:1fr}}@media(max-width:800px){.side{width:68px;padding:15px 8px}.brand{font-size:0;padding:10px}.brand b{font-size:22px}.season,.nav-title{display:none}.nav button{font-size:0;text-align:center}.main{padding:20px 14px}.top{display:block}.actions{margin-top:15px}.team-grid{grid-template-columns:1fr}}@media(max-width:560px){.grid,.form,.player-form{grid-template-columns:1fr}.title{font-size:25px}}
+</style>
+<style>.app{visibility:hidden}</style>
+</head>
+<body>
+<div id="cloudGate"></div>
+<div class="app">
+<aside class="side"><div class="brand">PRO<b>LEAGUE</b></div><div class="season">Active season<strong>Private League · 2026</strong></div><div class="nav nav-title">Workspace</div><div id="nav"><button class="active" data-page="dashboard">▦ &nbsp; Dashboard</button><button data-page="matches">◈ &nbsp; Matches</button><button data-page="rankings">♜ &nbsp; Rankings</button><button data-page="teams">⬡ &nbsp; Teams</button><button data-page="transferMarket">⇄ &nbsp; Transfers</button><button data-page="players">♙ &nbsp; Players</button><div class="nav nav-title">Manage</div><button data-page="add">＋ &nbsp; Add match</button><button data-page="settings">⚙ &nbsp; Appearance</button></div></aside>
+<main class="main">
+<section id="dashboard" class="content active"><div class="top"><div><div class="eyebrow">Private league / overview</div><div class="title">League dashboard</div><div class="sub">Build your 2026 season one game at a time.</div></div><div class="actions"><button class="btn" onclick="go('settings')">Customize</button><button class="btn primary" onclick="go('players')">＋ Add player</button></div></div><div class="grid"><div class="card"><div class="stat">Matches played</div><div class="number" id="matchCount">0</div></div><div class="card"><div class="stat">Registered teams</div><div class="number" id="teamCount">16</div></div><div class="card"><div class="stat">Active players</div><div class="number" id="playerCount">0</div></div><div class="card"><div class="stat">Games recorded</div><div class="number" id="gameCount">0</div></div></div><div class="section"><div class="sectionhead"><h2>Recent games</h2><button class="btn" onclick="go('matches')">View games</button></div><table><thead><tr><th>Player</th><th>Team</th><th>K/D/A</th><th>KDA</th><th>Tier</th></tr></thead><tbody id="dashGames"></tbody></table></div></section>
+<section id="matches" class="content"><div class="top"><div><div class="eyebrow">Competition</div><div class="title">Game results</div><div class="sub">Every game you record is calculated automatically.</div></div><button class="btn primary" onclick="go('players')">＋ Add game</button></div><div class="section"><table><thead><tr><th>Player</th><th>Team</th><th>Game</th><th>K/D/A</th><th>KDA</th><th>Tier</th></tr></thead><tbody id="allGames"></tbody></table></div></section>
+<section id="rankings" class="content"><div class="top"><div><div class="eyebrow">Competition</div><div class="title">Player rankings</div><div class="sub">Rankings appear as you add game data.</div></div></div><div class="section"><div class="sectionhead"><h2>Top teams by points</h2></div><table><thead><tr><th>Rank</th><th>Team</th><th>Points</th><th>Players</th></tr></thead><tbody id="teamPointsTable"></tbody></table></div><div class="section"><table><thead><tr><th>Player</th><th>Team</th><th>Games</th><th>Average KDA</th><th>Best tier</th></tr></thead><tbody id="rankTable"></tbody></table></div></section>
+<section id="teams" class="content"><div class="top"><div><div class="eyebrow">Directory</div><div class="title">League teams</div><div class="sub">Team profiles, rosters, and transfer activity.</div></div></div><div class="section"><div class="sectionhead"><h2>All teams</h2></div><div id="teamGrid" class="team-grid"></div><div id="teamProfile" class="team-profile"></div><div class="sectionhead"><h2>Standings snapshot</h2></div><table><thead><tr><th>Team</th><th>Players</th><th>Points</th></tr></thead><tbody id="teamTable"></tbody></table></div></section>
+<section id="transferMarket" class="content"><div class="top"><div><div class="eyebrow">League management</div><div class="title">Transfers & loans</div><div class="sub">Record player moves, fees, loan terms, and deal notes.</div></div></div><div class="section"><div class="sectionhead"><h2>Record a move</h2></div><form id="transferForm" class="form player-form"><div class="field"><label>Player</label><input id="transferPlayer" required placeholder="Player name"></div><div class="field"><label>From team</label><select id="transferFrom" required></select></div><div class="field"><label>To team</label><select id="transferTo" required></select></div><div class="field"><label>Move type</label><select id="transferType"><option value="Transfer">Permanent transfer</option><option value="Loan">Loan</option></select></div><div class="field"><label>Fee paid</label><input id="transferFee" type="number" min="0" step="1" placeholder="0 means free/undisclosed"></div><div class="field"><label>Currency</label><select id="transferCurrency"><option value="USD">USD ($)</option><option value="EUR">EUR (€)</option><option value="GBP">GBP (£)</option></select></div><div class="field"><label>Deal date</label><input id="transferDate" type="date" required></div><div class="field"><label>Loan duration</label><input id="transferDuration" placeholder="e.g. until Dec 2026"></div><div class="field full"><label>Notes</label><input id="transferNotes" placeholder="Optional terms or details"></div><div class="field full"><button class="btn primary" type="submit">Add to transfer list</button><div id="transferFeedback" class="sub" role="status" aria-live="polite"></div></div></form></div><div class="section"><div class="sectionhead"><h2>Transfer list</h2></div><table><thead><tr><th>Date</th><th>Player</th><th>From</th><th>To</th><th>Type</th><th>Fee</th><th>Duration / notes</th><th>Actions</th></tr></thead><tbody id="transferHistory"></tbody></table></div></section>
+<section id="players" class="content"><div class="top"><div><div class="eyebrow">Statistics</div><div class="title">Add player game</div><div class="sub">Enter one player's K/D/A from a game. KDA and tier are calculated for you.</div></div></div><div class="section"><form id="playerForm" class="form player-form"><div class="field"><label>Player name</label><input id="playerName" required placeholder="e.g. donk"></div><div class="field"><label>Team</label><select id="playerTeam" required></select></div><div class="field"><label>Game / map</label><input id="gameName" required placeholder="e.g. Mirage #1"></div><div class="field"><label>Country</label><input id="playerCountry" placeholder="e.g. Russia"></div><div class="field"><label>Kills</label><input id="kills" type="number" min="0" required></div><div class="field"><label>Deaths</label><input id="deaths" type="number" min="0" required></div><div class="field"><label>Assists</label><input id="assists" type="number" min="0" required></div><div class="field"><label>Tier mode</label><select id="tierMode"><option value="auto">Automatic KDA tier</option><option value="S">Manual Tier S</option><option value="A">Manual Tier A</option><option value="B">Manual Tier B</option><option value="C">Manual Tier C</option><option value="D">Manual Tier D</option></select></div><div class="field full"><button class="btn primary" type="submit">Add game result</button></div></form></div><div class="section"><div class="sectionhead"><h2>Recorded player games</h2></div><table><thead><tr><th>Player</th><th>Country</th><th>Team</th><th>K/D/A</th><th>KDA</th><th>Tier</th><th></th></tr></thead><tbody id="playerGames"></tbody></table></div></section>
+<section id="add" class="content"><div class="top"><div><div class="eyebrow">League management</div><div class="title">Add match</div><div class="sub">Create a match shell for your schedule.</div></div></div><div class="section"><form id="matchForm" class="form"><div class="field"><label>Team one</label><select id="matchTeamOne"></select></div><div class="field"><label>Team two</label><select id="matchTeamTwo"></select></div><div class="field"><label>Event / branch</label><input id="matchEvent" placeholder="Spring Cup · Playoffs"></div><div class="field"><label>Date and time</label><input id="matchDate" type="datetime-local"></div><div class="field full"><button class="btn primary" type="submit">Save match</button></div></form></div></section>
+<section id="settings" class="content"><div class="top"><div><div class="eyebrow">Workspace</div><div class="title">Appearance</div><div class="sub">Make the league feel like your own.</div></div></div><div class="section"><div class="sectionhead"><h2>Theme colors</h2></div><div id="themeForm" class="form"><div class="color"><label>Main color</label><input type="color" value="#77c9b3" data-var="--main"></div><div class="color"><label>Background</label><input type="color" value="#101820" data-var="--bg"></div><div class="color"><label>Panel color</label><input type="color" value="#19242d" data-var="--panel"></div><div class="color"><label>Panel accent</label><input type="color" value="#202e38" data-var="--panel2"></div></div></div></section>
+<footer class="site-credit">made by unperform1ng</footer>
+</main>
+</div>
+<script>
+// made by unperform1ng | application data
+const teams=['Team Spirit','NaVi','MOUZ','FURIA','Fnatic','G2 Esports','Cloud9','Falcons','Virtus.Pro','Gambit','The MongolZ','HellRaisers','FaZe Clan','Luminosity Gaming','Team Vitality','Team Liquid'];
+const teamLogos={
+'Team Spirit':'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Team_Spirit_new_em.svg/330px-Team_Spirit_new_em.svg.png','NaVi':'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/52/NAVI-Logo.svg/330px-NAVI-Logo.svg.png','MOUZ':'https://upload.wikimedia.org/wikipedia/commons/3/39/MOUZlogo2021.png','FURIA':'https://thumb.wikimedia.org/wikipedia/en/thumb/a/ad/FURIA_Esports_logo.svg/330px-FURIA_Esports_logo.svg.png','Fnatic':'https://thumb.wikimedia.org/wikipedia/en/thumb/4/43/Esports_organization_Fnatic_logo.svg/330px-Esports_organization_Fnatic_logo.svg.png','G2 Esports':'https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Esports_organization_G2_Esports_logo.svg/330px-Esports_organization_G2_Esports_logo.svg.png','Cloud9':'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Cloud9_logo_c._2023.svg/330px-Cloud9_logo_c._2023.svg.png','Falcons':'https://upload.wikimedia.org/wikipedia/en/thumb/4/4d/Team_Falcons_Logo.svg/330px-Team_Falcons_Logo.svg.png','Virtus.Pro':'https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Virtus_pro_logo_new.png/330px-Virtus_pro_logo_new.png','Gambit':'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Gambit_Esports_2020_logo.svg/330px-Gambit_Esports_2020_logo.svg.png','The MongolZ':'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/The_MongolZ.svg/330px-The_MongolZ.svg.png','HellRaisers':'https://upload.wikimedia.org/wikipedia/commons/4/44/HellRaisers_logo.png','FaZe Clan':'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Faze_Clan.svg/330px-Faze_Clan.svg.png','Luminosity Gaming':'https://thumb.wikimedia.org/wikipedia/en/thumb/a/ab/Luminosity_Gaming_logo.svg/330px-Luminosity_Gaming_logo.svg.png','Team Vitality':'https://thumb.wikimedia.org/wikipedia/en/thumb/4/49/Team_Vitality_logo.svg/330px-Team_Vitality_logo.svg.png','Team Liquid':'https://thumb.wikimedia.org/wikipedia/en/thumb/f/f1/Team_Liquid_logo.svg/330px-Team_Liquid_logo.svg.png'};
+let games=[];let matches=[];let transfers=[];let selectedTeam='Team Spirit';
+try{const savedTransfers=JSON.parse(localStorage.getItem('proleague.transfers')||'[]');if(Array.isArray(savedTransfers))transfers=savedTransfers;}catch{transfers=[];}
+const teamProfiles=teams.reduce((acc,team)=>{acc[team]={points:0,players:[],transfers:[],loans:[]};return acc;},{})
+const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const logo=(team,classes='')=>`<img class="logo${classes?` ${classes}`:''}" src="${teamLogos[team]||''}" alt="${esc(team)} logo" onerror="this.onerror=null;this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Ccircle cx=%2240%22 cy=%2234%22 r=%2227%22 fill=%22%23e5a93d%22/%3E%3Cpath d=%22M40 13 56 25v15c-4 8-10 14-16 18-6-4-12-10-16-18V25l16-12Z%22 fill=%22%230b0e13%22/%3E%3C/svg%3E'">`;
+const kda=(k,d,a)=>{const ratio=(Number(k)+Number(a))/Math.max(Number(d),1);let tier='D';if(ratio>=2)tier='S';else if(ratio>=1.5)tier='A';else if(ratio>=1.1)tier='B';else if(ratio>=.8)tier='C';return{ratio:ratio.toFixed(2),tier}};
+const tierFor=g=>g.tier==='auto'?kda(g.kills,g.deaths,g.assists).tier:g.tier;
+const teamOptions=()=>teams.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
+const playerRosterOptions=()=>`${teamOptions()}<option value="Free Agent">Free Agent</option>`;
+const transferDestinationOptions=()=>`${teamOptions()}<option value="Free Agent">Free Agent</option>`;
+const teamProfile=(team)=>teamProfiles[team]||{points:0,players:[],transfers:[],loans:[]};
+const formatFee=(fee,currency)=>Number(fee)>0?new Intl.NumberFormat('en-US',{style:'currency',currency,maximumFractionDigits:0}).format(Number(fee)):'Free / undisclosed';
+// made by unperform1ng | transfer summaries
+function syncTeamMoves(){teams.forEach(team=>{teamProfiles[team].transfers=[];teamProfiles[team].loans=[]});transfers.forEach(move=>{const item={...move,price:formatFee(move.fee,move.currency)};[move.from,move.to].forEach(team=>{if(!teamProfiles[team])return;if(move.type==='Loan')teamProfiles[team].loans.push(item);else teamProfiles[team].transfers.push(item);});});}
+function rebuildTeamMoves(){teams.forEach(team=>{teamProfiles[team].players=[]});[...transfers].reverse().forEach(move=>applyRosterMove(move));syncTeamMoves();}
+function saveTransfers(){try{localStorage.setItem('proleague.transfers',JSON.stringify(transfers));}catch(error){console.warn('Transfer history could not be saved in this browser.',error);}}
+function transferTeamMarkup(team){return teams.includes(team)?`<span class="transfer-team">${logo(team,'transfer-team__logo')}<b>${esc(team)}</b></span>`:`<span class="transfer-team"><b>${esc(team||'Unknown team')}</b></span>`;}
+function transferRouteMarkup(from,to){return`<div class="transfer-route">${transferTeamMarkup(from)}<span class="transfer-route__arrow" aria-label="to">→</span>${transferTeamMarkup(to)}</div>`;}
+function renderTransfers(){document.querySelector('#transferHistory').innerHTML=transfers.map((move,index)=>`<tr><td>${esc(move.date)}</td><td data-transfer-player="${esc(move.player)}"><b>${esc(move.player)}</b></td><td>${transferTeamMarkup(move.from)}</td><td>${transferTeamMarkup(move.to)}</td><td><span class="badge">${esc(move.type)}</span></td><td>${esc(formatFee(move.fee,move.currency))}</td><td>${esc([move.duration,move.notes].filter(Boolean).join(' · ')||'—')}</td><td><button class="remove" type="button" data-remove-transfer="${index}" aria-label="Remove ${esc(move.player)} move">Remove</button></td></tr>`).join('')||'<tr><td colspan="8" class="empty">No transfers recorded yet.</td></tr>';}
+function empty(target,columns){document.querySelector(target).innerHTML=`<tr><td colspan="${columns}" class="empty">No data yet. Add your first result.</td></tr>`}
+function showTeamProfile(team){selectedTeam=team;const profile=teamProfile(team);document.querySelector('#teamProfile').innerHTML=`<div class="team-profile__header"><div class="team-hero">${logo(team,'team-hero')}</div><div><div class="eyebrow">Team profile</div><h2 style="margin:6px 0 4px;font-size:28px">${esc(team)}</h2><div class="sub">${profile.players.length} active players · ${profile.points} points</div></div><div class="point-pill" style="margin-left:auto;">${profile.points} PTS</div></div><div class="team-profile__body"><div class="panel"><h3>Players</h3><ul class="team-players">${profile.players.map(player=>`<li><span>${esc(player)}</span><span class="badge">Active</span></li>`).join('')||'<li><span>No players yet</span></li>'}</ul></div><div class="panel"><h3>Transfers</h3><ul class="team-transfers">${profile.transfers.map(item=>`<li><strong>${esc(item.player)}</strong><small>${transferRouteMarkup(item.from,item.to)} · ${esc(item.price)}</small></li>`).join('')||'<li><strong>No transfer activity</strong></li>'}</ul></div><div class="panel"><h3>Loans</h3><ul class="team-transfers">${profile.loans.map(item=>`<li><strong>${esc(item.player)}</strong><small>${transferRouteMarkup(item.from,item.to)} · ${esc(item.duration||'Duration not set')}${Number(item.fee)>0?` · ${esc(formatFee(item.fee,item.currency))}`:''}</small></li>`).join('')||'<li><strong>No loan activity</strong></li>'}</ul></div></div>`;document.querySelectorAll('.team-card').forEach(card=>card.classList.toggle('selected',card.dataset.team===team));}
+function openTeamProfile(team){go('teams');showTeamProfile(team);renderPlayerFeatures();document.querySelector('#teamProfile').scrollIntoView({behavior:'smooth',block:'start'});}
+function renderTeamsGrid(){const list=teams.map(team=>{const profile=teamProfile(team);return `<button class="team-card ${selectedTeam===team?'selected':''}" data-team="${esc(team)}"><div class="team-card__head">${logo(team)}<div><strong>${esc(team)}</strong><div style="color:var(--muted);font-size:11px;">${profile.players.length} players</div></div></div><div class="team-card__meta"><span>Points</span><span class="point-pill">${profile.points}</span></div><div class="team-card__players">${profile.players.slice(0,3).map(p=>esc(p)).join(', ')}</div></button>`;}).join('');document.querySelector('#teamGrid').innerHTML=list;showTeamProfile(selectedTeam);}
+// made by unperform1ng | dashboard rendering
+function render(){
+ document.querySelector('#playerTeam').innerHTML=teamOptions();document.querySelector('#matchTeamOne').innerHTML=teamOptions();document.querySelector('#matchTeamTwo').innerHTML=teamOptions();document.querySelector('#transferFrom').innerHTML=teamOptions();document.querySelector('#transferTo').innerHTML=teamOptions();
+ document.querySelector('#teamCount').textContent=teams.length;document.querySelector('#playerCount').textContent=new Set(games.map(g=>g.player)).size;document.querySelector('#gameCount').textContent=games.length;document.querySelector('#matchCount').textContent=matches.length;
+ const rows=games.map((g,i)=>{const s=kda(g.kills,g.deaths,g.assists),tier=tierFor(g);return `<tr><td><b>${esc(g.player)}</b></td><td>${esc(g.country||'—')}</td><td><div class="team">${logo(g.team)}${esc(g.team)}</div></td><td class="kda">${g.kills}/${g.deaths}/${g.assists}</td><td class="kda">${s.ratio}</td><td class="rank-${tier}"><b>Tier ${tier}</b></td><td><button class="remove" onclick="removeGame(${i})">Remove</button></td></tr>`});
+ document.querySelector('#playerGames').innerHTML=rows.join('')||'<tr><td colspan="7" class="empty">No player games yet. Add one above.</td></tr>';document.querySelector('#allGames').innerHTML=games.map(g=>{const s=kda(g.kills,g.deaths,g.assists),tier=tierFor(g);return `<tr><td><b>${esc(g.player)}</b></td><td><div class="team">${logo(g.team)}${esc(g.team)}</div></td><td>${esc(g.game)}</td><td>${g.kills}/${g.deaths}/${g.assists}</td><td>${s.ratio}</td><td class="rank-${tier}"><b>Tier ${tier}</b></td></tr>`}).join('')||'<tr><td colspan="6" class="empty">No game results yet.</td></tr>';document.querySelector('#dashGames').innerHTML=games.slice(-5).reverse().map(g=>{const s=kda(g.kills,g.deaths,g.assists),tier=tierFor(g);return `<tr><td>${esc(g.player)}</td><td><div class="team">${logo(g.team)}${esc(g.team)}</div></td><td>${g.kills}/${g.deaths}/${g.assists}</td><td>${s.ratio}</td><td class="rank-${tier}"><b>${tier}</b></td></tr>`}).join('')||'<tr><td colspan="5" class="empty">No games recorded yet.</td></tr>';
+ const people=[...new Set(games.map(g=>g.player))];document.querySelector('#rankTable').innerHTML=people.map(name=>{const list=games.filter(g=>g.player===name),avg=(list.reduce((sum,g)=>sum+Number(kda(g.kills,g.deaths,g.assists).ratio),0)/list.length).toFixed(2),best=list.map(tierFor).sort().join('')[0];return `<tr><td><b>${esc(name)}</b></td><td>${esc(list[0].team)}</td><td>${list.length}</td><td>${avg}</td><td class="rank-${best}"><b>Tier ${best}</b></td></tr>`}).join('')||'<tr><td colspan="5" class="empty">No rankings until games are added.</td></tr>';
+ document.querySelector('#teamPointsTable').innerHTML=[...teams].sort((a,b)=>teamProfile(b).points-teamProfile(a).points).map((team,index)=>`<tr><td>#${index+1}</td><td><button class="team-open" data-team-profile="${esc(team)}">${logo(team)}${esc(team)}</button></td><td>${teamProfile(team).points}</td><td>${teamProfile(team).players.length}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No team standings.</td></tr>';
+ document.querySelector('#teamTable').innerHTML=teams.map(t=>{const profile=teamProfile(t);return `<tr><td><button class="team-open" data-team-profile="${esc(t)}">${logo(t)}${esc(t)}</button></td><td>${profile.players.length}</td><td>${profile.points}</td></tr>`}).join('')||'<tr><td colspan="3" class="empty">No teams available.</td></tr>';
+ renderTeamsGrid();renderTransfers();
+}
+// made by unperform1ng | game result actions
+function removeGame(index){if(cloudRole!=='editor'||!Number.isInteger(index)||index<0||index>=games.length)return;games.splice(index,1);saveLeagueResults();render()}
+function applyRosterMove(move){const fromRoster=teamProfile(move.from).players,toRoster=teamProfile(move.to).players;const fromIndex=fromRoster.indexOf(move.player),toIndex=toRoster.indexOf(move.player);if(fromIndex>=0)fromRoster.splice(fromIndex,1);if(toIndex>=0)toRoster.splice(toIndex,1);toRoster.push(move.player);}
+function removeTransfer(index){transfers.splice(index,1);rebuildTeamMoves();saveTransfers();render();}
+// made by unperform1ng | page navigation
+function go(page){document.querySelectorAll('.content').forEach(x=>x.classList.remove('active'));document.getElementById(page).classList.add('active');document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===page))}
+document.querySelector('#teamGrid').addEventListener('click',event=>{const card=event.target.closest('.team-card');if(card){openTeamProfile(card.dataset.team);}});
+document.querySelector('#teamPointsTable').addEventListener('click',event=>{const link=event.target.closest('[data-team-profile]');if(link){openTeamProfile(link.dataset.teamProfile);}});
+document.querySelector('#teamTable').addEventListener('click',event=>{const link=event.target.closest('[data-team-profile]');if(link){openTeamProfile(link.dataset.teamProfile);}});
+document.querySelector('#transferForm').addEventListener('submit',event=>{event.preventDefault();const move={player:document.querySelector('#transferPlayer').value.trim(),from:document.querySelector('#transferFrom').value,to:document.querySelector('#transferTo').value,type:document.querySelector('#transferType').value,fee:document.querySelector('#transferFee').value||0,currency:document.querySelector('#transferCurrency').value,date:document.querySelector('#transferDate').value,duration:document.querySelector('#transferDuration').value.trim(),notes:document.querySelector('#transferNotes').value.trim()};const feedback=document.querySelector('#transferFeedback');if(move.from===move.to){feedback.textContent='Choose two different teams for this move.';return;}transfers.unshift(move);rebuildTeamMoves();saveTransfers();event.target.reset();feedback.textContent=`${move.player} ${move.type.toLowerCase()} recorded.`;render();});
+document.querySelector('#transferHistory').addEventListener('click',event=>{const button=event.target.closest('[data-remove-transfer]');if(button)removeTransfer(Number(button.dataset.removeTransfer));});
+document.querySelectorAll('#nav button').forEach(x=>x.onclick=()=>go(x.dataset.page));document.querySelector('#playerForm').onsubmit=e=>{e.preventDefault();games.push({player:playerName.value,team:playerTeam.value,game:gameName.value,country:playerCountry.value,kills:kills.value,deaths:deaths.value,assists:assists.value,tier:tierMode.value});e.target.reset();render()};document.querySelector('#matchForm').onsubmit=e=>{e.preventDefault();matches.push({one:matchTeamOne.value,two:matchTeamTwo.value,event:matchEvent.value,date:matchDate.value});e.target.reset();render();go('matches')};document.querySelectorAll('[data-var]').forEach(x=>x.oninput=()=>document.documentElement.style.setProperty(x.dataset.var,x.value));render();
+</script>
+<script>rebuildTeamMoves();render();</script>
+<script>
+// made by unperform1ng | persistent player registry
+const playerStoreKey='proleague.players';
+let players=[];
+try{const savedPlayers=JSON.parse(localStorage.getItem(playerStoreKey)||'[]');if(Array.isArray(savedPlayers))players=savedPlayers;}catch{players=[];}
+try{const savedGames=JSON.parse(localStorage.getItem('proleague.games')||'[]');if(Array.isArray(savedGames))games=savedGames;}catch{games=[];}
+try{const savedMatches=JSON.parse(localStorage.getItem('proleague.matches')||'[]');if(Array.isArray(savedMatches))matches=savedMatches;}catch{matches=[];}
+const playerKey=name=>String(name||'').trim().toLocaleLowerCase();
+function savePlayers(){try{localStorage.setItem(playerStoreKey,JSON.stringify(players));}catch(error){console.warn('Player records could not be saved in this browser.',error);}}
+function saveLeagueResults(){try{localStorage.setItem('proleague.games',JSON.stringify(games));localStorage.setItem('proleague.matches',JSON.stringify(matches));}catch(error){console.warn('League results could not be saved in this browser.',error);}}
+function findPlayer(name){return players.find(player=>playerKey(player.name)===playerKey(name));}
+function currentPlayers(team){return players.filter(player=>player.team===team);}
+// made by unperform1ng | player portraits
+function playerAvatar(player,size=''){const initials=String(player.name||'?').trim().split(/\s+/).slice(0,2).map(part=>part[0]).join('').toUpperCase();return player.photo?`<img class="player-avatar ${size}" src="${esc(player.photo)}" alt="${esc(player.name)} photo">`:`<span class="player-avatar player-avatar--fallback ${size}" aria-label="${esc(player.name)}">${esc(initials)}</span>`;}
+function normalizeCountryName(value){return String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+const countryNames=new Map();
+const countryCodes=new Map();
+if(typeof Intl.DisplayNames==='function'){
+ const displayName=new Intl.DisplayNames(['en'],{type:'region'});
+ for(let first=65;first<=90;first++)for(let second=65;second<=90;second++){
+  const code=String.fromCharCode(first,second),name=displayName.of(code);
+  if(name&&name!==code&&name!=='Unknown Region'){countryNames.set(normalizeCountryName(name),code.toLowerCase());countryCodes.set(code.toLowerCase(),name);}
+ }
+}
+const countryAliases={usa:'US',unitedstatesofamerica:'US',uk:'GB',greatbritain:'GB',england:'GB',scotland:'GB',wales:'GB',northernireland:'GB',france:'FR',french:'FR',southkorea:'KR',republicofkorea:'KR',northkorea:'KP',czechrepublic:'CZ',turkey:'TR',turkiye:'TR',iran:'IR',ivorycoast:'CI',capeverde:'CV',vietnam:'VN',russia:'RU'};
+function countryCode(country){const key=normalizeCountryName(country);if(!key)return'';const alias=countryAliases[key];if(alias)return alias.toLowerCase();if(/^[a-z]{2}$/i.test(String(country).trim()))return String(country).trim().toLowerCase();return countryNames.get(key)||'';}
+function countryFlagMarkup(country){const name=String(country||'').trim(),code=countryCode(name);if(!name)return'<span class="country-flag-missing" aria-label="Country not set" title="Country not set">--</span>';if(!code)return`<span class="country-flag-missing" aria-label="Flag unavailable for ${esc(name)}" title="${esc(name)}">?</span>`;return`<img class="country-flag" src="https://flagcdn.com/w40/${code}.png" alt="${esc(name)} flag" title="${esc(name)}" loading="lazy">`;}
+function playerNameButton(player,extraClass=''){return`<button class="player-open player-open--with-avatar ${extraClass}" data-player-id="${esc(player.id)}">${countryFlagMarkup(player.country)}${playerAvatar(player,'player-avatar--small')}${esc(player.name)}</button>`;}
+async function encodePlayerPhoto(file){if(!file)return'';if(!['image/jpeg','image/png','image/webp'].includes(file.type))throw new Error('Choose a JPG, PNG, or WebP image.');if(file.size>8*1024*1024)throw new Error('Image must be smaller than 8 MB.');const bitmap=await createImageBitmap(file);const canvas=document.createElement('canvas'),size=320;canvas.width=size;canvas.height=size;const scale=Math.max(size/bitmap.width,size/bitmap.height),width=bitmap.width*scale,height=bitmap.height*scale;canvas.getContext('2d').drawImage(bitmap,(size-width)/2,(size-height)/2,width,height);bitmap.close();return canvas.toDataURL('image/jpeg',.82);}
+function impactRating(player){const list=games.filter(game=>playerKey(game.player)===playerKey(player.name));if(!list.length)return 1;const average=list.reduce((totals,game)=>({kills:totals.kills+Number(game.kills||0),deaths:totals.deaths+Number(game.deaths||0),assists:totals.assists+Number(game.assists||0)}),{kills:0,deaths:0,assists:0});const sampleWeight=Math.min(list.length/5,1),perGameImpact=((average.kills-average.deaths)*4+average.assists*1.5)/list.length;return Number(Math.max(0,Math.min(2,1+perGameImpact*sampleWeight/50)).toFixed(2));}
+function playerStats(player){const list=games.filter(game=>playerKey(game.player)===playerKey(player.name));const average=list.length?list.reduce((sum,game)=>sum+Number(kda(game.kills,game.deaths,game.assists).ratio),0)/list.length:0;const tierOrder=['S','A','B','C','D'];const best=list.map(tierFor).sort((a,b)=>tierOrder.indexOf(a)-tierOrder.indexOf(b))[0]||'—';return{games:list.length,average:average.toFixed(2),best,impact:impactRating(player)};}
+function renderFreeAgentDirectory(){
+ const list=document.querySelector('#freeAgentList');if(!list)return;
+ const freeAgents=players.filter(player=>player.team==='Free Agent');
+ document.querySelector('#freeAgentCount').textContent=`${freeAgents.length} available`;
+ list.innerHTML=freeAgents.map(player=>`<div class="free-agent-row"><button class="player-open player-open--with-avatar" data-player-id="${esc(player.id)}">${countryFlagMarkup(player.country)}${playerAvatar(player,'player-avatar--small')}${esc(player.name)}</button><span>${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(player.value)||0)}</span></div>`).join('')||'<div class="empty">No free agents right now.</div>';
+}
+function validSteamUrl(value){if(!value)return true;try{const url=new URL(value);return(url.protocol==='https:'||url.protocol==='http:')&&/(^|\.)steamcommunity\.com$/i.test(url.hostname);}catch{return false;}}
+// made by unperform1ng | player registration interface
+function installPlayerFeatures(){
+ const nav=document.querySelector('#nav');const rankingsTab=document.createElement('button');rankingsTab.dataset.page='playerRankings';rankingsTab.textContent='♙  Player rankings';nav.insertBefore(rankingsTab,nav.querySelector('[data-page="teams"]'));
+ const page=document.createElement('section');page.id='playerRankings';page.className='content';page.innerHTML='<div class="top"><div><div class="eyebrow">Competition</div><div class="title">Player rankings</div><div class="sub">Browse every registered player and their season performance.</div></div></div><div class="section"><div class="sectionhead"><h2>Ranked players</h2></div><table><thead><tr><th>Rank</th><th>Player</th><th>Team</th><th>Games</th><th>Average KDA</th><th>Impact</th><th>Best tier</th><th>Market value</th></tr></thead><tbody id="playerRankList"></tbody></table></div><div id="playerProfile" class="section"></div>';
+ document.querySelector('.main').append(page);
+ document.querySelector('#playerGames').closest('table').tHead.rows[0].cells[1].textContent='Flag';
+ const freeAgentDirectory=document.createElement('section');freeAgentDirectory.id='freeAgentDirectory';freeAgentDirectory.className='section';freeAgentDirectory.innerHTML='<div class="sectionhead"><h2>Free Agents</h2><span id="freeAgentCount" class="sub"></span></div><div id="freeAgentList" class="free-agent-list"></div>';document.querySelector('#teams').append(freeAgentDirectory);
+ const playerSection=document.querySelector('#players');const register=document.createElement('div');register.className='section';register.innerHTML='<div class="sectionhead"><h2>Register player</h2></div><form id="registerPlayerForm" class="form player-form"><div class="field"><label>Player name</label><input id="registerName" required placeholder="e.g. donk"></div><div class="field"><label>Team</label><select id="registerTeam" required></select></div><div class="field"><label>Country</label><input id="registerCountry" placeholder="e.g. Russia"></div><div class="field"><label>Player photo</label><input id="registerPhoto" type="file" accept="image/jpeg,image/png,image/webp"><small class="sub">JPG, PNG, or WebP · max 8 MB</small></div><div class="field"><label>Steam profile URL</label><input id="registerSteam" type="url" placeholder="https://steamcommunity.com/id/..."></div><div class="field"><label>Market value (USD)</label><input id="registerValue" type="number" min="0" step="1000" placeholder="0"></div><div class="field full"><button class="btn primary" type="submit">Register player</button><span id="registerFeedback" class="sub" role="status" aria-live="polite"></span></div></form>';
+ register.querySelector('#registerTeam').previousElementSibling.textContent='Team / roster status';
+ playerSection.insertBefore(register,playerSection.children[1]);
+ const transferPlayer=document.querySelector('#transferPlayer');const playerSelect=document.createElement('select');playerSelect.id='transferPlayer';playerSelect.required=true;playerSelect.setAttribute('aria-label','Player');transferPlayer.replaceWith(playerSelect);
+ const transferTeam=document.querySelector('#transferFrom');transferTeam.disabled=true;transferTeam.title='Player current team';
+ const profileStyle=document.createElement('style');profileStyle.textContent='.player-name-link,.player-open{padding:0;border:0;background:transparent;color:var(--text);font:inherit;font-weight:700;text-align:left;cursor:pointer}.player-name-link:hover,.player-open:hover{color:var(--main)}.player-profile{padding:18px}.player-profile__header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px;border-bottom:1px solid var(--line)}.player-profile__identity{display:flex;align-items:center;gap:16px;min-width:0}.player-avatar{display:inline-flex;width:34px;height:34px;flex:0 0 34px;align-items:center;justify-content:center;object-fit:cover;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--main);font-size:12px;font-weight:800}.player-avatar--large{width:88px;height:88px;flex-basis:88px;font-size:24px}.player-avatar--small{width:28px;height:28px;flex-basis:28px;font-size:10px}.player-open--with-avatar{display:inline-flex;align-items:center;gap:9px}.player-profile__stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px}.player-profile__stats .card{padding:12px}.player-profile__edit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:0 14px 16px}.player-profile__games{overflow-x:auto}.photo-preview{display:flex;align-items:center;gap:10px}.photo-actions{display:flex;gap:8px;align-items:center}.photo-remove{border:1px solid var(--danger);background:transparent;color:var(--danger);padding:7px 9px;cursor:pointer}@media(max-width:700px){.player-profile__header{align-items:flex-start}.player-profile__identity{align-items:flex-start}.player-profile__stats,.player-profile__edit{grid-template-columns:repeat(2,minmax(0,1fr))}}';document.head.append(profileStyle);
+ document.querySelector('#registerPlayerForm').addEventListener('submit',async event=>{event.preventDefault();const name=document.querySelector('#registerName').value.trim(),team=document.querySelector('#registerTeam').value,steam=document.querySelector('#registerSteam').value.trim(),feedback=document.querySelector('#registerFeedback'),file=document.querySelector('#registerPhoto').files[0];if(findPlayer(name)){feedback.textContent='A player with that name is already registered.';return;}if(!validSteamUrl(steam)){feedback.textContent='Enter a valid Steam profile URL.';return;}try{const photo=await encodePlayerPhoto(file);players.push({id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,name,team,originalTeam:team,country:document.querySelector('#registerCountry').value.trim(),steam,value:Number(document.querySelector('#registerValue').value)||0,photo});savePlayers();event.target.reset();feedback.textContent=`${name} added to ${team}.`;render();}catch(error){feedback.textContent=error.message||'The photo could not be processed.';}});
+ document.querySelector('#transferForm').replaceWith(document.querySelector('#transferForm').cloneNode(true));
+ document.querySelector('#transferPlayer').addEventListener('change',event=>{const player=players.find(item=>item.id===event.target.value);document.querySelector('#transferFrom').innerHTML=player?`<option value="${esc(player.team)}">${esc(player.team)}</option>`:teamOptions();document.querySelector('#transferTo').innerHTML=transferDestinationOptions();});
+ document.querySelector('#transferForm').addEventListener('submit',event=>{event.preventDefault();const player=players.find(item=>item.id===document.querySelector('#transferPlayer').value);const feedback=document.querySelector('#transferFeedback');if(!player){feedback.textContent='Register a player before recording a move.';return;}const from=player.team,to=document.querySelector('#transferTo').value;if(from===to){feedback.textContent='Choose a different destination team.';return;}const move={player:player.name,from,to,type:document.querySelector('#transferType').value,fee:document.querySelector('#transferFee').value||0,currency:document.querySelector('#transferCurrency').value,date:document.querySelector('#transferDate').value,duration:document.querySelector('#transferDuration').value.trim(),notes:document.querySelector('#transferNotes').value.trim()};transfers.unshift(move);player.team=to;savePlayers();rebuildTeamMoves();saveTransfers();event.target.reset();feedback.textContent=`${move.player} ${move.type.toLowerCase()} recorded.`;render();});
+ document.querySelector('#playerProfile').addEventListener('submit',async event=>{if(event.target.id!=='playerEditForm')return;event.preventDefault();const player=players.find(item=>item.id===event.target.dataset.playerId);if(!player)return;const steam=document.querySelector('#profileSteam').value.trim(),feedback=document.querySelector('#profileFeedback');if(!validSteamUrl(steam)){feedback.textContent='Enter a valid Steam profile URL.';return;}try{const photoFile=document.querySelector('#profilePhoto').files[0];if(photoFile)player.photo=await encodePlayerPhoto(photoFile);player.value=Number(document.querySelector('#profileValue').value)||0;player.steam=steam;player.country=document.querySelector('#profileCountry').value.trim();savePlayers();render();showPlayerProfile(player.id);}catch(error){feedback.textContent=error.message||'The photo could not be processed.';}});
+ document.querySelector('#playerProfile').addEventListener('click',event=>{if(event.target.closest('#removePlayerPhoto')){const player=players.find(item=>item.id===document.querySelector('#playerEditForm')?.dataset.playerId);if(player){player.photo='';savePlayers();showPlayerProfile(player.id);renderPlayerFeatures();}}});
+ document.querySelector('.main').addEventListener('click',event=>{const button=event.target.closest('.player-open');if(button)showPlayerProfile(button.dataset.playerId);});
+ document.querySelectorAll('#nav button').forEach(button=>button.addEventListener('click',()=>go(button.dataset.page)));
+}
+function rebuildTeamMoves(){teams.forEach(team=>{teamProfiles[team].players=currentPlayers(team).map(player=>player.name);teamProfiles[team].points=0;teamProfiles[team].transfers=[];teamProfiles[team].loans=[];});transfers.forEach(move=>{const item={...move,price:formatFee(move.fee,move.currency)};[move.from,move.to].forEach(team=>{if(teamProfiles[team]){if(move.type==='Loan')teamProfiles[team].loans.push(item);else teamProfiles[team].transfers.push(item);}});});}
+// made by unperform1ng | player rankings and team rosters
+function renderPlayerFeatures(){
+ const registerTeam=document.querySelector('#registerTeam');if(registerTeam)registerTeam.innerHTML=playerRosterOptions();
+ const select=document.querySelector('#transferPlayer');if(select){const previous=select.value;select.innerHTML='<option value="">Select registered player</option>'+players.map(player=>`<option value="${esc(player.id)}">${esc(player.name)} · ${esc(player.team)}</option>`).join('');if(players.some(player=>player.id===previous))select.value=previous;const selected=players.find(player=>player.id===select.value);document.querySelector('#transferFrom').innerHTML=selected?`<option value="${esc(selected.team)}">${esc(selected.team)}</option>`:teamOptions();document.querySelector('#transferFrom').disabled=true;document.querySelector('#transferTo').innerHTML=transferDestinationOptions();}
+ const rankedPlayers=[...players].sort((a,b)=>playerStats(b).impact-playerStats(a).impact||Number(playerStats(b).average)-Number(playerStats(a).average)||playerStats(b).games-playerStats(a).games||a.name.localeCompare(b.name));const rows=rankedPlayers.map((player,index)=>{const stats=playerStats(player);return `<tr><td>#${index+1}</td><td>${playerNameButton(player)}</td><td>${esc(player.team)}</td><td>${stats.games}</td><td>${stats.average}</td><td><span class="impact-score impact-score--${stats.impact>=1.5?'high':stats.impact>=1?'mid':'low'}">${stats.impact.toFixed(2)}</span></td><td class="rank-${stats.best}">${stats.best==='—'?'—':`Tier ${stats.best}`}</td><td>${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(player.value)||0)}</td></tr>`;}).join('');document.querySelector('#playerRankList').innerHTML=rows||'<tr><td colspan="8" class="empty">No registered players yet. Add a player on the Players tab.</td></tr>';
+ ['#playerGames','#allGames','#dashGames'].forEach(selector=>document.querySelectorAll(`${selector} tr`).forEach(row=>{const cell=row.cells[0],existing=cell?.querySelector('[data-player-id]'),player=existing?players.find(item=>item.id===existing.dataset.playerId):cell&&findPlayer(cell.textContent.trim());if(player)cell.innerHTML=playerNameButton(player);if(selector==='#playerGames'&&row.cells[1]&&player)row.cells[1].innerHTML=countryFlagMarkup(player.country||row.cells[1].textContent);}));
+ document.querySelectorAll('.team-players li').forEach(item=>{const cell=item.firstElementChild,existing=cell?.querySelector('[data-player-id]'),player=existing?players.find(item=>item.id===existing.dataset.playerId):cell&&findPlayer(cell.textContent.trim());if(player)cell.innerHTML=playerNameButton(player);});
+ document.querySelectorAll('#rankTable tr').forEach(row=>{const cell=row.cells[0],existing=cell?.querySelector('[data-player-id]'),player=existing?players.find(item=>item.id===existing.dataset.playerId):cell&&findPlayer(cell.textContent.trim());if(player)cell.innerHTML=playerNameButton(player,'player-open--plain');});
+ document.querySelectorAll('#transferHistory [data-transfer-player]').forEach(cell=>{const player=findPlayer(cell.dataset.transferPlayer);if(player)cell.innerHTML=`${countryFlagMarkup(player.country)}<b>${esc(player.name)}</b>`;});
+ renderFreeAgentDirectory();
+}
+function showPlayerProfile(id){const player=players.find(item=>item.id===id);if(!player)return;go('playerRankings');const stats=playerStats(player),history=games.filter(game=>playerKey(game.player)===playerKey(player.name));document.querySelector('#playerProfile').innerHTML=`<div class="player-profile"><div class="player-profile__header"><div class="player-profile__identity">${playerAvatar(player,'player-avatar--large')}<div><div class="eyebrow">Player profile · ${esc(player.team)}</div><h2 style="margin:5px 0 8px">${esc(player.name)}</h2><div class="sub">${esc(player.country||'Country not set')} · ${stats.games} recorded games</div>${player.steam?`<p><a href="${esc(player.steam)}" target="_blank" rel="noopener noreferrer">Open Steam profile ↗</a></p>`:'<p class="sub">No Steam profile linked</p>'}</div></div><div class="point-pill">${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(player.value)||0)}</div></div><div class="player-profile__stats"><div class="card"><div class="stat">Games</div><div class="number">${stats.games}</div></div><div class="card"><div class="stat">Average KDA</div><div class="number">${stats.average}</div></div><div class="card"><div class="stat">Best tier</div><div class="number">${stats.best}</div></div><div class="card"><div class="stat">Market value</div><div class="number">${new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(Number(player.value)||0)}</div></div></div><form id="playerEditForm" class="player-profile__edit" data-player-id="${esc(player.id)}"><div class="field"><label>Country</label><input id="profileCountry" value="${esc(player.country||'')}"></div><div class="field"><label>Steam profile URL</label><input id="profileSteam" type="url" value="${esc(player.steam||'')}"></div><div class="field"><label>Market value (USD)</label><input id="profileValue" type="number" min="0" step="1000" value="${Number(player.value)||0}"></div><div class="field full"><label>Player photo</label><div class="photo-actions"><input id="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp"><button id="removePlayerPhoto" class="photo-remove" type="button">Remove photo</button></div><small class="sub">JPG, PNG, or WebP · max 8 MB. Uploading a new photo replaces the current one.</small></div><div class="field full"><button class="btn primary" type="submit">Save profile</button> <span id="profileFeedback" class="sub" role="status"></span></div></form><div class="sectionhead"><h2>Game history</h2></div><div class="player-profile__games"><table><thead><tr><th>Game</th><th>Team</th><th>K/D/A</th><th>KDA</th><th>Tier</th></tr></thead><tbody>${history.map(game=>{const result=kda(game.kills,game.deaths,game.assists),tier=tierFor(game);return `<tr><td>${esc(game.game)}</td><td>${esc(game.team)}</td><td>${game.kills}/${game.deaths}/${game.assists}</td><td>${result.ratio}</td><td class="rank-${tier}">Tier ${tier}</td></tr>`;}).join('')||'<tr><td colspan="5" class="empty">No games recorded yet.</td></tr>'}</tbody></table></div></div>`;}
+// made by unperform1ng | profile navigation and updates
+const originalRender=render;render=function(){originalRender();renderPlayerFeatures();};
+const originalGo=go;go=function(page){originalGo(page);if(page==='playerRankings')renderPlayerFeatures();};
+removeTransfer=function(index){transfers.splice(index,1);players.forEach(player=>{if(!player.teamOverride&&player.originalTeam)player.team=player.originalTeam;});[...transfers].reverse().forEach(move=>{const player=findPlayer(move.player);if(player&&!player.teamOverride)player.team=move.to;});savePlayers();rebuildTeamMoves();saveTransfers();render();};
+document.querySelector('#playerForm').onsubmit=event=>{event.preventDefault();const name=document.querySelector('#playerName').value.trim(),team=document.querySelector('#playerTeam').value;let player=findPlayer(name);if(!player){player={id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,name,team,originalTeam:team,country:document.querySelector('#playerCountry').value.trim(),steam:'',value:0};players.push(player);}else if(document.querySelector('#playerCountry').value.trim())player.country=document.querySelector('#playerCountry').value.trim();games.push({player:player.name,team,game:document.querySelector('#gameName').value,country:player.country,kills:document.querySelector('#kills').value,deaths:document.querySelector('#deaths').value,assists:document.querySelector('#assists').value,tier:document.querySelector('#tierMode').value});savePlayers();saveLeagueResults();event.target.reset();render();};
+document.querySelector('#matchForm').onsubmit=event=>{event.preventDefault();matches.push({one:document.querySelector('#matchTeamOne').value,two:document.querySelector('#matchTeamTwo').value,event:document.querySelector('#matchEvent').value,date:document.querySelector('#matchDate').value});saveLeagueResults();event.target.reset();render();go('matches');};
+installPlayerFeatures();rebuildTeamMoves();render();
+// made by unperform1ng | fixture initialization
+matches.forEach(match=>{if(!match.id)match.id=crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`;if(!match.status)match.status=Number.isInteger(Number(match.scoreOne))&&Number.isInteger(Number(match.scoreTwo))?'completed':'scheduled';if(match.scoreOne==null)match.scoreOne=null;if(match.scoreTwo==null)match.scoreTwo=null;});
+const fixtureSection=document.createElement('div');fixtureSection.className='section';fixtureSection.id='fixtureSection';fixtureSection.innerHTML='<div class="sectionhead"><h2>Fixtures & results</h2><span id="fixtureCount" class="sub"></span></div><div class="fixture-table"><table><thead><tr><th>Date</th><th>Event</th><th>Fixture</th><th>Score</th><th>Status</th><th></th></tr></thead><tbody id="fixtureRows"></tbody></table></div>';
+document.querySelector('#matches').append(fixtureSection);
+const matchFeedback=document.createElement('div');matchFeedback.id='matchFeedback';matchFeedback.className='sub';matchFeedback.setAttribute('role','status');document.querySelector('#matchForm .field.full').append(matchFeedback);
+const fixtureStyle=document.createElement('style');fixtureStyle.textContent='.fixture-table{overflow-x:auto}.score-entry{display:flex;align-items:center;gap:6px;min-width:112px}.score-entry input{width:48px;padding:7px 5px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--text);text-align:center}.fixture-status{font-size:11px;font-weight:700;text-transform:uppercase}.fixture-status--completed{color:var(--good)}.fixture-status--scheduled{color:var(--muted)}.fixture-actions{display:flex;gap:6px;white-space:nowrap}.fixture-actions button{padding:6px 8px;border:1px solid var(--line);border-radius:3px;background:transparent;color:var(--text);cursor:pointer}.fixture-actions button:hover{border-color:var(--main);color:var(--main)}#fixtureSection td{vertical-align:middle}@media(max-width:700px){#fixtureSection table{min-width:740px}}';document.head.append(fixtureStyle);
+// made by unperform1ng | points table calculation
+function standingsForTeams(){const standings=Object.fromEntries(teams.map(team=>[team,{wins:0,draws:0,losses:0,matches:0,points:0,difference:0}]));matches.filter(match=>match.status==='completed').forEach(match=>{const one=standings[match.one],two=standings[match.two];if(!one||!two)return;const scoreOne=Number(match.scoreOne),scoreTwo=Number(match.scoreTwo);one.matches++;two.matches++;one.difference+=scoreOne-scoreTwo;two.difference+=scoreTwo-scoreOne;if(scoreOne>scoreTwo){one.wins++;one.points+=3;two.losses++;}else if(scoreTwo>scoreOne){two.wins++;two.points+=3;one.losses++;}else{one.draws++;two.draws++;one.points++;two.points++;}});return standings;}
+function refreshStandingsAndFixtures(){
+ const standings=standingsForTeams();teams.forEach(team=>teamProfiles[team].points=standings[team].points);
+ const pointHeader=document.querySelector('#teamPointsTable').closest('table').tHead.rows[0];if(pointHeader.cells.length===4)pointHeader.insertAdjacentHTML('beforeend','<th>W</th><th>D</th><th>L</th>');
+ document.querySelector('#teamPointsTable').innerHTML=[...teams].sort((a,b)=>standings[b].points-standings[a].points||standings[b].wins-standings[a].wins||standings[b].difference-standings[a].difference||a.localeCompare(b)).map((team,index)=>`<tr><td>#${index+1}</td><td><button class="team-open" data-team-profile="${esc(team)}">${logo(team)}${esc(team)}</button></td><td><b>${standings[team].points}</b></td><td>${teamProfiles[team].players.length}</td><td>${standings[team].wins}</td><td>${standings[team].draws}</td><td>${standings[team].losses}</td></tr>`).join('');
+ const teamHeader=document.querySelector('#teamTable').closest('table').tHead.rows[0];if(teamHeader.cells.length===3)teamHeader.insertAdjacentHTML('beforeend','<th>W</th><th>D</th><th>L</th>');
+ document.querySelector('#teamTable').innerHTML=teams.map(team=>`<tr><td><button class="team-open" data-team-profile="${esc(team)}">${logo(team)}${esc(team)}</button></td><td>${teamProfiles[team].players.length}</td><td>${standings[team].points}</td><td>${standings[team].wins}</td><td>${standings[team].draws}</td><td>${standings[team].losses}</td></tr>`).join('');
+ renderTeamsGrid();renderPlayerFeatures();
+ const sorted=[...matches].sort((a,b)=>{if(a.status!==b.status)return a.status==='scheduled'?-1:1;const dateA=new Date(a.date||0).getTime(),dateB=new Date(b.date||0).getTime();return a.status==='scheduled'?dateA-dateB:dateB-dateA;});
+ document.querySelector('#fixtureCount').textContent=`${matches.filter(match=>match.status==='completed').length} completed · ${matches.filter(match=>match.status!=='completed').length} scheduled`;
+ document.querySelector('#fixtureRows').innerHTML=sorted.map(match=>{const date=match.date?new Date(match.date).toLocaleString():'Date not set',completed=match.status==='completed';return `<tr data-match-row="${esc(match.id)}"><td>${esc(date)}</td><td>${esc(match.event||'League match')}</td><td><b>${esc(match.one)}</b><br><span class="sub">vs</span><br><b>${esc(match.two)}</b></td><td><div class="score-entry"><input data-score-one type="number" min="0" step="1" aria-label="${esc(match.one)} score" value="${completed?esc(match.scoreOne):''}" placeholder="0"><span>:</span><input data-score-two type="number" min="0" step="1" aria-label="${esc(match.two)} score" value="${completed?esc(match.scoreTwo):''}" placeholder="0"></div></td><td><span class="fixture-status fixture-status--${completed?'completed':'scheduled'}">${completed?'Completed':'Scheduled'}</span></td><td><div class="fixture-actions"><button type="button" data-save-match="${esc(match.id)}">${completed?'Update':'Record'}</button><button type="button" data-delete-match="${esc(match.id)}" aria-label="Delete match">Delete</button></div></td></tr>`;}).join('')||'<tr><td colspan="6" class="empty">No fixtures yet. Create a match to start the season.</td></tr>';
+}
+const playerRenderWithCompetition=render;render=function(){playerRenderWithCompetition();refreshStandingsAndFixtures();};
+document.querySelector('#matchForm').onsubmit=event=>{event.preventDefault();const one=document.querySelector('#matchTeamOne').value,two=document.querySelector('#matchTeamTwo').value,feedback=document.querySelector('#matchFeedback');if(one===two){feedback.textContent='Choose two different teams for a match.';return;}const match={id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,one,two,event:document.querySelector('#matchEvent').value.trim(),date:document.querySelector('#matchDate').value,status:'scheduled',scoreOne:null,scoreTwo:null};matches.push(match);saveLeagueResults();event.target.reset();feedback.textContent=`${one} vs ${two} added to fixtures.`;render();go('matches');};
+fixtureSection.addEventListener('click',event=>{const saveButton=event.target.closest('[data-save-match]'),deleteButton=event.target.closest('[data-delete-match]');if(deleteButton){matches=matches.filter(match=>match.id!==deleteButton.dataset.deleteMatch);saveLeagueResults();render();return;}if(saveButton){const row=saveButton.closest('[data-match-row]'),scoreOne=row.querySelector('[data-score-one]').value,scoreTwo=row.querySelector('[data-score-two]').value;if(scoreOne===''||scoreTwo===''||!Number.isInteger(Number(scoreOne))||!Number.isInteger(Number(scoreTwo))){document.querySelector('#fixtureCount').textContent='Enter whole-number scores for both teams.';return;}const match=matches.find(item=>item.id===saveButton.dataset.saveMatch);if(!match)return;match.scoreOne=Number(scoreOne);match.scoreTwo=Number(scoreTwo);match.status='completed';match.completedAt=new Date().toISOString();saveLeagueResults();render();}});
+refreshStandingsAndFixtures();
+</script>
+<script>
+document.body.classList.add('cloud-locked');
+const cloudGate=document.querySelector('#cloudGate');
+const cloudApp=document.querySelector('.app');
+const localLeagueDraft={players:players.map(item=>({...item})),games:games.map(item=>({...item})),matches:matches.map(item=>({...item})),transfers:transfers.map(item=>({...item}))};
+let cloudClient=null,cloudRole='viewer',cloudRevision=0,cloudReady=false,cloudSaveTimer=null,cloudUserId='',cloudBooting=false,cloudSaveRunning=false,cloudSaveAgain=false;
+let cloudAccountBar=null,cloudImportBanner=null,cloudStatus=null;
+function showCloudGate(message,configMissing=false){
+ cloudApp.style.visibility='hidden';cloudGate.hidden=false;cloudGate.innerHTML=`<div class="cloud-card"><div class="eyebrow">ProLeague access</div><h1>League sign in</h1><p>${configMissing?'Cloud access needs Supabase setup before this league can be opened. The site owner must add the project URL and anon/public key to supabase-config.js, run supabase-schema.sql in the project SQL Editor, and host this page over HTTPS.':'Sign in to view the league. New accounts start as viewers; an editor must grant write access.'}</p>${configMissing?'<p>Do not put a Supabase service-role key in this site.</p>':`<form id="cloudAuthForm"><div class="cloud-field"><label for="cloudEmail">Email</label><input id="cloudEmail" name="email" type="email" autocomplete="email" required></div><div class="cloud-field"><label for="cloudPassword">Password</label><input id="cloudPassword" name="password" type="password" minlength="8" autocomplete="current-password" required></div><div class="cloud-actions"><button class="primary" type="submit" data-auth-mode="signin">Sign in</button><button type="submit" data-auth-mode="signup">Create viewer account</button></div></form>`}<div class="cloud-message" id="cloudMessage" role="status">${esc(message||'')}</div></div>`;
+ if(!configMissing)document.querySelector('#cloudAuthForm').addEventListener('submit',async event=>{event.preventDefault();const submitter=event.submitter,mode=submitter?.dataset.authMode||'signin',email=document.querySelector('#cloudEmail').value.trim(),password=document.querySelector('#cloudPassword').value,messageNode=document.querySelector('#cloudMessage');messageNode.textContent=mode==='signup'?'Creating account…':'Signing in…';document.querySelectorAll('#cloudAuthForm button').forEach(button=>button.disabled=true);try{const result=mode==='signup'?await cloudClient.auth.signUp({email,password}):await cloudClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;if(mode==='signup'&&!result.data.session){messageNode.textContent='Account created. Check your email to confirm it, then sign in.';}else if(result.data.session){await loadCloudLeague(result.data.session);}else{messageNode.textContent='Account created. Sign in to continue.';}}catch(error){messageNode.textContent=error.message||'Authentication failed.';}finally{document.querySelectorAll('#cloudAuthForm button').forEach(button=>button.disabled=false);}});
+}
+function emptyLeagueData(data){return!data||!['players','games','matches','transfers'].some(key=>Array.isArray(data[key])&&data[key].length);}
+function normalizeCloudMatches(){matches.forEach(match=>{if(!match.id)match.id=crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`;if(!match.status)match.status=Number.isInteger(Number(match.scoreOne))&&Number.isInteger(Number(match.scoreTwo))?'completed':'scheduled';if(match.scoreOne==null)match.scoreOne=null;if(match.scoreTwo==null)match.scoreTwo=null;});}
+function applyCloudTheme(theme){if(!theme)return;Object.entries(theme).forEach(([name,value])=>{if(/^--(main|bg|panel|panel2)$/.test(name)&&/^#[0-9a-f]{6}$/i.test(value)){document.documentElement.style.setProperty(name,value);const input=document.querySelector(`[data-var="${name}"]`);if(input)input.value=value;}});}
+function currentLeagueState(){const theme={};['--main','--bg','--panel','--panel2'].forEach(name=>theme[name]=getComputedStyle(document.documentElement).getPropertyValue(name).trim());return{players,games,matches,transfers,theme};}
+function renderCloudAccount(){
+ document.body.classList.toggle('cloud-viewer',cloudRole!=='editor');
+ if(!cloudAccountBar){cloudAccountBar=document.createElement('div');cloudAccountBar.className='cloud-account';document.querySelector('.main').prepend(cloudAccountBar);}
+ cloudAccountBar.innerHTML=`<strong>${esc(cloudRole==='editor'?'Editor':'Viewer')}</strong><span id="cloudSyncStatus" role="status">Connected</span><button id="cloudSignOut" type="button">Sign out</button>`;cloudStatus=document.querySelector('#cloudSyncStatus');
+ document.querySelector('#cloudSignOut').addEventListener('click',async()=>{cloudReady=false;await cloudClient.auth.signOut();cloudUserId='';document.body.classList.remove('cloud-viewer');showCloudGate('You have signed out.');});
+ if(!cloudImportBanner){cloudImportBanner=document.createElement('div');cloudImportBanner.className='cloud-import';cloudImportBanner.innerHTML='<span>This shared league is empty. Import the league data saved in this browser?</span><button type="button" id="cloudImportLocal">Import this browser</button>';cloudAccountBar.after(cloudImportBanner);}
+ const hasLocalData=localLeagueDraft.players.length||localLeagueDraft.games.length||localLeagueDraft.matches.length||localLeagueDraft.transfers.length;
+ cloudImportBanner.hidden=!(cloudRole==='editor'&&hasLocalData&&emptyLeagueData(window.__proleagueCloudData));
+ const importButton=document.querySelector('#cloudImportLocal');importButton.onclick=async()=>{players=localLeagueDraft.players.map(item=>({...item}));games=localLeagueDraft.games.map(item=>({...item}));matches=localLeagueDraft.matches.map(item=>({...item}));transfers=localLeagueDraft.transfers.map(item=>({...item}));normalizeCloudMatches();cloudImportBanner.hidden=true;cloudReady=false;rebuildTeamMoves();render();cloudReady=true;await saveCloudLeague();};
+}
+async function saveCloudLeague(){if(!cloudReady||cloudRole!=='editor'||!cloudClient)return;if(cloudSaveRunning){cloudSaveAgain=true;return;}cloudSaveRunning=true;cloudStatus.textContent='Saving…';try{const result=await cloudClient.rpc('save_league_state',{p_data:currentLeagueState(),p_expected_revision:cloudRevision});if(result.error){cloudSaveAgain=false;cloudStatus.textContent=result.error.message.includes('LEAGUE_STATE_CONFLICT')?'Sync conflict: reload before editing':'Save failed';cloudStatus.title=result.error.message;return;}cloudRevision=Number(result.data);cloudStatus.textContent='Synced';cloudStatus.title='Shared league changes are saved.';}finally{cloudSaveRunning=false;if(cloudSaveAgain){cloudSaveAgain=false;setTimeout(()=>saveCloudLeague(),0);}}}
+function queueCloudSave(){if(!cloudReady||cloudRole!=='editor')return;clearTimeout(cloudSaveTimer);if(cloudStatus)cloudStatus.textContent='Changes pending…';cloudSaveTimer=setTimeout(()=>saveCloudLeague(),500);}
+async function loadCloudLeague(session){if(!session?.user||cloudBooting||cloudUserId===session.user.id)return;cloudBooting=true;try{const [memberResult,stateResult]=await Promise.all([cloudClient.from('league_members').select('role').eq('user_id',session.user.id).single(),cloudClient.from('league_state').select('data,revision').eq('id',1).single()]);if(memberResult.error)throw memberResult.error;if(stateResult.error)throw stateResult.error;cloudRole=memberResult.data.role==='editor'?'editor':'viewer';cloudRevision=Number(stateResult.data.revision)||0;const data=stateResult.data.data||{};window.__proleagueCloudData=data;players=Array.isArray(data.players)?data.players:[];games=Array.isArray(data.games)?data.games:[];matches=Array.isArray(data.matches)?data.matches:[];transfers=Array.isArray(data.transfers)?data.transfers:[];normalizeCloudMatches();applyCloudTheme(data.theme);rebuildTeamMoves();cloudReady=false;render();cloudUserId=session.user.id;renderCloudAccount();cloudApp.style.visibility='visible';cloudGate.hidden=true;document.body.classList.remove('cloud-locked');cloudReady=true;}catch(error){cloudUserId='';showCloudGate(`Could not load the shared league: ${error.message||'check Supabase setup and policies.'}`);}finally{cloudBooting=false;}}
+const oldCloudRender=render;render=function(){oldCloudRender();queueCloudSave();};
+const oldCloudSavePlayers=savePlayers;savePlayers=function(){oldCloudSavePlayers();queueCloudSave();};
+const oldCloudSaveTransfers=saveTransfers;saveTransfers=function(){oldCloudSaveTransfers();queueCloudSave();};
+const oldCloudSaveResults=saveLeagueResults;saveLeagueResults=function(){oldCloudSaveResults();queueCloudSave();};
+const originalShowPlayerProfile=showPlayerProfile;
+showPlayerProfile=function(id){
+ originalShowPlayerProfile(id);
+ const player=players.find(item=>item.id===id),form=document.querySelector('#playerEditForm');
+ if(!player||!form)return;
+ form.insertAdjacentHTML('afterbegin',`<div class="field"><label>Player name</label><input id="profileName" value="${esc(player.name)}" required></div><div class="field"><label>Roster status</label><select id="profileTeam">${playerRosterOptions()}</select></div>`);
+ document.querySelector('#profileTeam').value=player.team;
+ form.querySelector('.field.full:last-of-type').insertAdjacentHTML('beforeend',' <button id="deletePlayer" class="remove" type="button">Delete player</button>');
+ document.querySelector('#playerProfile').scrollIntoView({behavior:'instant',block:'start'});
+};
+document.querySelector('#playerProfile').addEventListener('submit',event=>{
+ if(event.target.id!=='playerEditForm')return;
+ const player=players.find(item=>item.id===event.target.dataset.playerId);
+ if(!player)return;
+ const name=document.querySelector('#profileName').value.trim(),duplicate=players.some(item=>item.id!==player.id&&playerKey(item.name)===playerKey(name));
+ if(!name||duplicate){event.preventDefault();event.stopImmediatePropagation();document.querySelector('#profileFeedback').textContent=duplicate?'A player with that name is already registered.':'Enter a player name.';return;}
+ const previousName=player.name;player.name=name;player.team=document.querySelector('#profileTeam').value;player.originalTeam=player.team;player.teamOverride=true;rebuildTeamMoves();
+ if(previousName!==name){games.forEach(game=>{if(playerKey(game.player)===playerKey(previousName))game.player=name;});transfers.forEach(move=>{if(playerKey(move.player)===playerKey(previousName))move.player=name;});saveLeagueResults();saveTransfers();}
+ savePlayers();
+},true);
+document.querySelector('#transferForm').addEventListener('submit',event=>{const player=players.find(item=>item.id===document.querySelector('#transferPlayer').value);if(player)player.teamOverride=false;},true);
+document.querySelector('#playerProfile').addEventListener('click',event=>{
+ if(!event.target.closest('#deletePlayer'))return;
+ const player=players.find(item=>item.id===document.querySelector('#playerEditForm')?.dataset.playerId);
+ if(!player||!confirm(`Delete ${player.name}, including their recorded games and transfer history?`))return;
+ const name=player.name;players=players.filter(item=>item.id!==player.id);games=games.filter(game=>playerKey(game.player)!==playerKey(name));transfers=transfers.filter(move=>playerKey(move.player)!==playerKey(name));
+ savePlayers();saveLeagueResults();saveTransfers();rebuildTeamMoves();render();go('playerRankings');
+});
+const supabaseConfig=window.PROLEAGUE_SUPABASE||{};
+const supabaseConfigured=typeof supabase!=='undefined'&&supabase.createClient&&/^https:\/\//.test(supabaseConfig.url||'')&&supabaseConfig.anonKey&&!/YOUR_|YOUR\s/i.test(`${supabaseConfig.url} ${supabaseConfig.anonKey}`);
+if(!supabaseConfigured||location.protocol==='file:'){showCloudGate('',true);}else{
+ cloudClient=supabase.createClient(supabaseConfig.url,supabaseConfig.anonKey);
+ document.querySelectorAll('[data-var]').forEach(input=>input.addEventListener('input',queueCloudSave));
+ cloudClient.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){cloudReady=false;cloudUserId='';document.body.classList.add('cloud-locked');showCloudGate('You have signed out.');}else if(session)setTimeout(()=>loadCloudLeague(session),0);});
+ cloudClient.auth.getSession().then(({data,error})=>{if(error)throw error;if(data.session)loadCloudLeague(data.session);else showCloudGate('');}).catch(error=>showCloudGate(error.message||'Unable to check your session.'));
+}
+</script>
+<script>
+const ersAwards={
+ 'tournament-winner':{label:'Tournament Winner',points:100},
+ 'runner-up':{label:'Runner-up',points:70},
+ 'semi-finalist':{label:'Semi-Finalist',points:50},
+ 'quarter-finalist':{label:'Quarter-Finalist',points:25},
+ 'playoff-qualifier':{label:'Playoff Qualifier',points:15},
+ 'swiss-elimination':{label:'Swiss Stage Elimination',points:5}
+};
+const matchDetail=document.createElement('section');
+matchDetail.id='matchDetail';matchDetail.className='section match-detail';matchDetail.hidden=true;
+document.querySelector('#matches').append(matchDetail);
+const matchDetailStyle=document.createElement('style');
+matchDetailStyle.textContent='.match-detail{padding:18px}.match-detail[hidden]{display:none}.match-detail__header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:18px;padding:20px;background:var(--panel2);border:1px solid var(--line)}.match-detail__team{text-align:center;font-size:18px;font-weight:700}.match-detail__team img{display:block;width:54px;height:54px;margin:0 auto 8px}.match-detail__score{text-align:center;font-size:32px;font-weight:800}.match-detail__meta{margin-top:8px;text-align:center;color:var(--muted);font-size:12px}.match-detail__body{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:14px;margin-top:14px}.match-detail__section{background:var(--panel2);border:1px solid var(--line);padding:14px}.match-detail__section h3{margin:0 0 12px}.map-cards{display:grid;gap:8px}.map-card{display:grid;grid-template-columns:minmax(90px,1fr) auto auto auto;align-items:center;gap:10px;padding:12px;background:var(--bg);border:1px solid var(--line)}.map-score{font-size:18px;font-weight:800}.map-state{color:var(--muted);font-size:11px;text-transform:uppercase}.match-detail__form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.match-detail__form .field label{display:block;margin-bottom:5px;color:var(--muted);font-size:10px;text-transform:uppercase}.match-detail__form input,.match-detail__form select{width:100%;padding:9px;background:var(--bg);color:var(--text);border:1px solid var(--line)}.match-detail__form .full{grid-column:1/-1}.match-detail__back{margin-bottom:12px}.match-detail__games{margin-top:14px}.match-detail__games h4{margin:10px 0}.match-type{display:inline-block;margin-left:8px;padding:3px 7px;border:1px solid var(--line);color:var(--muted);font-size:10px;text-transform:uppercase}.ers-table td,.ers-table th{padding:9px}.match-profile-link{display:inline-flex;align-items:center;gap:7px;padding:2px 0;border:0;background:transparent;color:var(--main);font:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px;cursor:pointer}.match-profile-link:hover{color:var(--good)}.match-team-profile-link{color:var(--text);font-weight:700}.match-team-profile-link img{width:22px;height:22px}.match-team-stat-group h5{padding:8px 11px}.match-team-stat-group h5 .match-team-profile-link{margin:-8px -11px;padding:8px 11px}.cloud-viewer #matchDetail form,.cloud-viewer #matchDetail [data-delete-map]{display:none!important}.cloud-viewer .fixture-actions{display:flex!important}.cloud-viewer .fixture-actions [data-save-match],.cloud-viewer .fixture-actions [data-delete-match]{display:none!important}@media(max-width:800px){.match-detail__body{grid-template-columns:1fr}.match-detail__header{gap:8px}.match-detail__team{font-size:14px}.match-detail__score{font-size:25px}}';
+document.head.append(matchDetailStyle);
+const matchProfileLinkStyle=document.createElement('style');matchProfileLinkStyle.textContent='.match-detail__team{display:flex;flex-direction:column;justify-content:center;text-decoration:none}.match-detail__team:focus-visible,.match-profile-link:focus-visible{outline:2px solid var(--main);outline-offset:3px}.match-detail__team img{width:54px;height:54px}#randomizeBracketTeams{margin-top:8px}';document.head.append(matchProfileLinkStyle);
+const matchRowStyle=document.createElement('style');matchRowStyle.textContent='#fixtureRows tr[data-match-row]{cursor:pointer}#fixtureRows tr[data-match-row] input,#fixtureRows tr[data-match-row] button{cursor:auto}';document.head.append(matchRowStyle);
+const playerMatchField=document.createElement('div');
+playerMatchField.className='field';playerMatchField.innerHTML='<label for="playerMatch">Scheduled match (optional)</label><select id="playerMatch"><option value="">Unlinked game</option></select>';
+document.querySelector('#playerForm .field.full').before(playerMatchField);
+const matchTypeField=document.createElement('div');
+matchTypeField.className='field';matchTypeField.innerHTML='<label for="matchType">Match type</label><select id="matchType"><option value="League">League match</option><option value="Friendly">Friendly match</option></select>';
+document.querySelector('#matchForm .field.full').before(matchTypeField);
+const ersRanking=document.createElement('div');
+ersRanking.className='section';
+ersRanking.innerHTML='<div class="sectionhead"><h2>ERS points</h2><span class="sub">Tournament placements and friendly wins</span></div><table class="ers-table"><thead><tr><th>Rank</th><th>Team</th><th>ERS points</th><th>League titles</th></tr></thead><tbody id="ersRankingRows"></tbody></table>';
+document.querySelector('#rankings').insertBefore(ersRanking,document.querySelector('#rankings').children[1]);
+function honorEventKey(match){return String(match.event?.trim()||match.id);}
+function ersTotals(team){let total=0;const placements=new Set();matches.forEach(match=>{if(match.status!=='completed')return;if((match.type||'League')==='Friendly'){const winner=Number(match.scoreOne)>Number(match.scoreTwo)?match.one:Number(match.scoreTwo)>Number(match.scoreOne)?match.two:'';if(winner===team)total++;return;}[[match.ersAward,match.ersTeam],[match.secondaryErsAward,match.secondaryErsTeam]].forEach(([awardKey,awardTeam])=>{const award=ersAwards[awardKey];if(award&&awardTeam===team){const key=`${honorEventKey(match)}:${team}:${awardKey}`;if(!placements.has(key)){placements.add(key);total+=award.points;}}});});return total;}
+function teamTitleCount(team){return new Set(matches.filter(match=>match.status==='completed'&&match.ersAward==='tournament-winner'&&match.ersTeam===team).map(honorEventKey)).size;}
+function playerHonors(player){const completed=matches.filter(match=>match.status==='completed'),uniqueByEvent=list=>[...new Map(list.map(match=>[honorEventKey(match),match])).values()],manual=Array.isArray(player.manualHonors)?player.manualHonors:[];return{titles:[...uniqueByEvent(completed.filter(match=>match.ersAward==='tournament-winner'&&Array.isArray(match.awardedPlayerIds)&&match.awardedPlayerIds.includes(player.id))),...manual.filter(honor=>honor.type==='title')],tournamentMVP:[...uniqueByEvent(completed.filter(match=>match.tournamentMvpId===player.id)),...manual.filter(honor=>honor.type==='tournamentMvp')],matchMVP:[...completed.filter(match=>match.matchMvpId===player.id),...manual.filter(honor=>honor.type==='matchMvp')]};}
+function syncMatchSelectors(){const matchSelect=document.querySelector('#playerMatch');if(matchSelect){const selected=matchSelect.value;matchSelect.innerHTML='<option value="">Unlinked game</option>'+matches.map(match=>`<option value="${esc(match.id)}">${esc(match.one)} vs ${esc(match.two)} · ${esc(match.event||'League match')}</option>`).join('');if(matches.some(match=>match.id===selected))matchSelect.value=selected;}const awardTeam=document.querySelector('#matchErsTeam');if(awardTeam){const selected=awardTeam.value;awardTeam.innerHTML=teamOptions();if(teams.includes(selected))awardTeam.value=selected;}}
+function renderERSLeaderboard(){document.querySelector('#ersRankingRows').innerHTML=[...teams].sort((a,b)=>ersTotals(b)-ersTotals(a)||a.localeCompare(b)).map((team,index)=>`<tr><td>#${index+1}</td><td><div class="team">${logo(team)}${esc(team)}</div></td><td><b>${ersTotals(team)}</b></td><td>${teamTitleCount(team)}</td></tr>`).join('');}
+function renderMatchMapGroups(match){const linked=games.filter(game=>game.matchId===match.id),groups=[...new Set(linked.map(game=>game.game))];if(!groups.length)return'<p class="sub">No player stats are linked yet. Choose this fixture in the game-entry form to add map stats here.</p>';return groups.map(mapName=>{const mapGames=linked.filter(game=>game.game===mapName),teamGroups=[...new Set(mapGames.map(game=>game.team))];return`<div class="match-detail__games"><h4>${esc(mapName)}</h4>${teamGroups.map(team=>`<section class="match-team-stat-group"><h5><button type="button" class="match-profile-link match-team-profile-link" data-team-profile="${esc(team)}">${logo(team,'match-team-stat-group__logo')}<span>${esc(team)}</span></button></h5><table><thead><tr><th>Player</th><th>K/D/A</th><th>KDA</th><th>Tier</th></tr></thead><tbody>${mapGames.filter(game=>game.team===team).map(game=>{const player=findPlayer(game.player);return`<tr><td>${player?`<button type="button" class="match-profile-link" data-player-profile="${esc(player.id)}">${countryFlagMarkup(player.country)}${esc(player.name)}</button>`:esc(game.player)}</td><td>${esc(game.kills)}/${esc(game.deaths)}/${esc(game.assists)}</td><td>${kda(game.kills,game.deaths,game.assists).ratio}</td><td class="rank-${tierFor(game)}">Tier ${tierFor(game)}</td></tr>`;}).join('')}</tbody></table></section>`).join('')}</div>`;}).join('');}
+function showMatchDetails(id){
+ const match=matches.find(item=>item.id===id);if(!match)return;
+ if(!match.type)match.type='League';if(!Array.isArray(match.mapResults))match.mapResults=[];
+ document.querySelector('#matches > .top').hidden=true;document.querySelector('#allGames').closest('.section').hidden=true;document.querySelector('#fixtureSection').hidden=true;matchDetail.hidden=false;
+ matchDetail.dataset.matchId=id;
+ const awardOptions=Object.entries(ersAwards).map(([value,award])=>`<option value="${value}">${award.label} (+${award.points})</option>`).join('');
+ const playerOptions=['<option value="">Not selected</option>',...players.map(player=>`<option value="${esc(player.id)}">${esc(player.name)} · ${esc(player.team)}</option>`)].join('');
+ const maps=Array.isArray(match.mapResults)?match.mapResults:[],winner=match.status==='completed'?(Number(match.scoreOne)>Number(match.scoreTwo)?match.one:Number(match.scoreTwo)>Number(match.scoreOne)?match.two:'Draw'):'Scheduled';
+ matchDetail.innerHTML=`<button class="btn match-detail__back" type="button" data-back-matches>← All matches</button><div class="match-detail__header"><button type="button" class="match-profile-link match-detail__team" data-team-profile="${esc(match.one)}">${logo(match.one)}${esc(match.one)}</button><div><div class="match-detail__score">${match.status==='completed'?`${esc(match.scoreOne)} : ${esc(match.scoreTwo)}`:'VS'}</div><div class="match-detail__meta">${esc(match.event||'League match')}<span class="match-type">${esc(match.type||'League')}</span><br>${esc(match.date?new Date(match.date).toLocaleString():'Date not set')} · ${esc(winner)}</div></div><button type="button" class="match-profile-link match-detail__team" data-team-profile="${esc(match.two)}">${logo(match.two)}${esc(match.two)}</button></div><div class="match-detail__body"><section class="match-detail__section"><h3>Map veto and results</h3><div class="map-cards">${maps.map((map,index)=>`<div class="map-card"><strong>${esc(map.name)}</strong><span class="map-state">${esc(map.status)}</span><span class="map-score">${map.scoreOne==null?'':`${esc(map.scoreOne)} : ${esc(map.scoreTwo)}`}</span><button class="remove" type="button" data-delete-map="${index}">Remove</button></div>`).join('')||'<p class="sub">No map picks or results added.</p>'}</div><form id="matchMapForm" class="match-detail__form"><div class="field"><label>Map</label><input name="mapName" required placeholder="e.g. Mirage"></div><div class="field"><label>Map status</label><select name="mapStatus"><option>Pick</option><option>Ban</option><option>Played</option><option>Decider</option></select></div><div class="field"><label>${esc(match.one)} score</label><input name="mapScoreOne" type="number" min="0"></div><div class="field"><label>${esc(match.two)} score</label><input name="mapScoreTwo" type="number" min="0"></div><div class="field full"><button class="btn primary" type="submit">Add map</button></div></form>${renderMatchMapGroups(match)}</section><section class="match-detail__section"><h3>ERS awards and MVPs</h3><form id="matchAwardsForm" class="match-detail__form"><div class="field"><label>ERS placement</label><select id="matchErsAward"><option value="">No tournament placement</option>${awardOptions}</select></div><div class="field"><label>Award team</label><select id="matchErsTeam">${teamOptions()}</select></div><div class="field"><label>Match MVP</label><select id="matchMvp">${playerOptions}</select></div><div class="field"><label>Tournament MVP</label><select id="tournamentMvp">${playerOptions}</select></div><div class="field full"><button class="btn primary" type="submit">Save awards</button><span id="matchAwardsFeedback" class="sub" role="status"></span></div></form><p class="sub">Friendly wins earn 1 ERS point automatically when the match is completed.</p></section></div>`;
+ appendMatchDetailControls();
+ document.querySelector('#matchTypeDetail').value=match.type||'League';document.querySelector('#matchErsAward').value=match.ersAward||'';document.querySelector('#matchErsTeam').value=match.ersTeam||match.one;document.querySelector('#matchMvp').value=match.matchMvpId||'';document.querySelector('#tournamentMvp').value=match.tournamentMvpId||'';
+ const placement=ersAwards[match.ersAward],matchMvp=players.find(player=>player.id===match.matchMvpId),tournamentMvp=players.find(player=>player.id===match.tournamentMvpId),awardSummary=document.createElement('p');
+ awardSummary.className='sub';awardSummary.textContent=[placement?`${placement.label} (+${placement.points}) · ${match.ersTeam||match.one}`:'No tournament placement recorded',matchMvp?`Match MVP: ${matchMvp.name}`:'',tournamentMvp?`Tournament MVP: ${tournamentMvp.name}`:''].filter(Boolean).join(' | ');
+ document.querySelector('#matchAwardsForm').after(awardSummary);
+ document.querySelector('#matches').scrollIntoView({behavior:'instant',block:'start'});
+}
+function hideMatchDetails(){matchDetail.hidden=true;document.querySelector('#matches > .top').hidden=false;document.querySelector('#allGames').closest('.section').hidden=false;document.querySelector('#fixtureSection').hidden=false;document.querySelector('#fixtureSection').scrollIntoView({behavior:'instant',block:'start'});}
+function enhanceFixtureRows(){document.querySelectorAll('#fixtureRows [data-match-row]').forEach(row=>{const match=matches.find(item=>item.id===row.dataset.matchRow),actions=row.querySelector('.fixture-actions');if(!match||!actions||actions.querySelector('[data-open-match]'))return;row.cells[1].insertAdjacentHTML('beforeend',`<span class="match-type">${esc(match.type||'League')}</span>`);actions.insertAdjacentHTML('beforeend',`<button type="button" data-open-match="${esc(match.id)}">Details</button>`);});}
+const renderBeforeMatchFeatures=render;
+render=function(){renderBeforeMatchFeatures();syncMatchSelectors();renderERSLeaderboard();enhanceFixtureRows();};
+matches.forEach(match=>{if(!match.type)match.type='League';if(!Array.isArray(match.mapResults))match.mapResults=[];});
+document.querySelector('#matchForm').onsubmit=event=>{
+ event.preventDefault();const one=document.querySelector('#matchTeamOne').value,two=document.querySelector('#matchTeamTwo').value,feedback=document.querySelector('#matchFeedback');
+ if(one===two){feedback.textContent='Choose two different teams for a match.';return;}
+ matches.push({id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,one,two,type:document.querySelector('#matchType').value,event:document.querySelector('#matchEvent').value.trim(),date:document.querySelector('#matchDate').value,status:'scheduled',scoreOne:null,scoreTwo:null,mapResults:[]});
+ saveLeagueResults();event.target.reset();feedback.textContent=`${one} vs ${two} added to fixtures.`;render();go('matches');
+};
+document.querySelector('#playerForm').onsubmit=event=>{
+ event.preventDefault();const name=document.querySelector('#playerName').value.trim(),team=document.querySelector('#playerTeam').value;let player=findPlayer(name);
+ if(!player){player={id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,name,team,originalTeam:team,country:document.querySelector('#playerCountry').value.trim(),steam:'',value:0};players.push(player);}else if(document.querySelector('#playerCountry').value.trim())player.country=document.querySelector('#playerCountry').value.trim();
+ games.push({player:player.name,team,game:document.querySelector('#gameName').value.trim(),country:player.country,kills:Number(document.querySelector('#kills').value),deaths:Number(document.querySelector('#deaths').value),assists:Number(document.querySelector('#assists').value),tier:document.querySelector('#tierMode').value,matchId:document.querySelector('#playerMatch').value||''});
+ savePlayers();saveLeagueResults();event.target.reset();render();
+};
+document.querySelector('#fixtureRows').addEventListener('click',event=>{const button=event.target.closest('[data-open-match]'),row=event.target.closest('[data-match-row]');if(button){showMatchDetails(button.dataset.openMatch);return;}if(row&&!event.target.closest('button,input,select,a'))showMatchDetails(row.dataset.matchRow);});
+matchDetail.addEventListener('click',event=>{
+ if(event.target.closest('[data-back-matches]')){hideMatchDetails();return;}
+ const playerLink=event.target.closest('[data-player-profile]');if(playerLink){showPlayerProfile(playerLink.dataset.playerProfile);return;}
+ const teamLink=event.target.closest('[data-team-profile]');if(teamLink){openTeamProfile(teamLink.dataset.teamProfile);return;}
+ const removeButton=event.target.closest('[data-delete-map]');if(removeButton){const match=matches.find(item=>item.id===matchDetail.dataset.matchId);if(!match||cloudRole!=='editor')return;match.mapResults.splice(Number(removeButton.dataset.deleteMap),1);saveLeagueResults();render();showMatchDetails(match.id);}
+});
+matchDetail.addEventListener('submit',event=>{
+ event.preventDefault();const match=matches.find(item=>item.id===matchDetail.dataset.matchId);if(!match||cloudRole!=='editor')return;
+ if(event.target.id==='matchMapForm'){
+  const form=new FormData(event.target),name=String(form.get('mapName')||'').trim(),status=String(form.get('mapStatus')||'Pick'),scoreOne=form.get('mapScoreOne'),scoreTwo=form.get('mapScoreTwo');
+  if(!name)return;
+  match.mapResults.push({name,status,scoreOne:scoreOne===''?null:Number(scoreOne),scoreTwo:scoreTwo===''?null:Number(scoreTwo)});saveLeagueResults();render();showMatchDetails(match.id);return;
+ }
+ if(event.target.id==='matchAwardsForm'){
+  match.type=document.querySelector('#matchTypeDetail').value;match.ersAward=document.querySelector('#matchErsAward').value;match.ersTeam=document.querySelector('#matchErsTeam').value;match.matchMvpId=document.querySelector('#matchMvp').value;match.tournamentMvpId=document.querySelector('#tournamentMvp').value;
+  match.awardedPlayerIds=match.ersAward==='tournament-winner'?players.filter(player=>player.team===match.ersTeam).map(player=>player.id):[];
+  saveLeagueResults();render();showMatchDetails(match.id);
+ }
+});
+function appendMatchDetailControls(){
+ const awardForm=document.querySelector('#matchAwardsForm');
+ if(awardForm&&!document.querySelector('#matchTypeDetail'))awardForm.insertAdjacentHTML('afterbegin','<div class="field"><label>Match type</label><select id="matchTypeDetail"><option value="League">League match</option><option value="Friendly">Friendly match</option></select></div>');
+ const mapForm=document.querySelector('#matchMapForm');
+ if(mapForm&&!document.querySelector('#linkExistingGameForm')){
+  const options=games.map((game,index)=>game.matchId?'':`<option value="${index}">${esc(game.player)} · ${esc(game.game)} · ${esc(game.team)}</option>`).filter(Boolean).join('');
+  mapForm.insertAdjacentHTML('afterend',`<form id="linkExistingGameForm" class="match-detail__form"><div class="field full"><label>Link an existing player result</label><select name="gameIndex"><option value="">Select an unlinked result</option>${options}</select></div><div class="field full"><button class="btn" type="submit">Link result to match</button></div></form>`);
+ }
+}
+const showMatchDetailsBase=showMatchDetails;
+showMatchDetails=function(id){showMatchDetailsBase(id);matchDetail.dataset.matchId=id;appendMatchDetailControls();};
+matchDetail.addEventListener('submit',event=>{
+ if(event.target.id!=='linkExistingGameForm')return;
+ event.preventDefault();if(cloudRole!=='editor')return;const match=matches.find(item=>item.id===matchDetail.dataset.matchId),index=Number(new FormData(event.target).get('gameIndex')),game=games[index];
+ if(!match||!game||game.matchId)return;
+ game.matchId=match.id;saveLeagueResults();render();showMatchDetails(match.id);
+});
+const showProfileBeforeHonors=showPlayerProfile;
+showPlayerProfile=function(id){
+ showProfileBeforeHonors(id);const player=players.find(item=>item.id===id),stats=document.querySelector('#playerProfile .player-profile__stats');
+ if(!player||!stats)return;
+ const honors=playerHonors(player),titles=honors.titles.map(match=>`<li>${esc(match.event||'League')} · ${esc(match.date?new Date(match.date).getFullYear():'Season')}</li>`).join('');
+ stats.insertAdjacentHTML('beforebegin',`<section class="player-honors"><div><span aria-hidden="true">🏆</span><strong>${honors.titles.length}</strong><small>League titles</small></div><div><span aria-hidden="true">★</span><strong>${honors.tournamentMVP.length}</strong><small>Tournament MVPs</small></div><div><span aria-hidden="true">✦</span><strong>${honors.matchMVP.length}</strong><small>Match MVPs</small></div>${titles?`<ul>${titles}</ul>`:''}</section>`);
+};
+const honorsStyle=document.createElement('style');honorsStyle.textContent='.player-honors{display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:12px 14px;border-bottom:1px solid var(--line)}.player-honors>div{display:grid;grid-template-columns:auto auto;column-gap:7px;align-items:center}.player-honors>div span{grid-row:span 2;color:var(--main);font-size:20px}.player-honors>div strong{font-size:16px}.player-honors>div small{color:var(--muted)}.player-honors ul{margin:0 0 0 auto;color:var(--muted);font-size:12px}';document.head.append(honorsStyle);
+const bracketSection=document.createElement('section');bracketSection.id='leagueBrackets';bracketSection.className='section';
+bracketSection.innerHTML='<div class="sectionhead"><h2>League brackets</h2><span class="sub">Single-elimination tournament</span></div><form id="bracketForm" class="form bracket-form"><div class="field"><label for="bracketName">League / tournament name</label><input id="bracketName" required placeholder="e.g. Season 3 Playoffs"></div><div class="field"><label for="bracketSize">Bracket size</label><select id="bracketSize"><option value="4">4 teams</option><option value="8">8 teams</option><option value="16">16 teams</option></select></div><div class="field full"><label>Select exactly <span id="bracketRequiredCount">4</span> teams</label><div id="bracketTeamChoices" class="bracket-team-choices"></div><button class="btn" type="button" id="randomizeBracketTeams">🎲 Randomize team selection</button></div><div class="field full"><button class="btn primary" type="submit">Create league bracket</button><span id="bracketFeedback" class="sub" role="status"></span></div></form><div id="bracketList"></div>';
+document.querySelector('#matches').insertBefore(bracketSection,fixtureSection);
+const bracketStyle=document.createElement('style');
+bracketStyle.textContent='.bracket-form{grid-template-columns:2fr 1fr}.bracket-team-choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:10px;border:1px solid var(--line);background:var(--bg)}.bracket-team-choice{display:flex;align-items:center;gap:7px;padding:6px;color:var(--text);font-size:12px}.bracket-team-choice input{width:auto}.bracket-board-wrap{margin:0 14px 16px;border:1px solid var(--line);background:var(--bg);overflow-x:auto}.bracket-board{display:flex;align-items:stretch;gap:16px;min-height:340px;padding:14px}.bracket-round{display:flex;flex:1 0 190px;flex-direction:column;justify-content:space-around;gap:12px}.bracket-round h3{position:sticky;top:0;margin:0;padding:8px;background:var(--panel2);color:var(--muted);font-size:12px;text-align:center;text-transform:uppercase}.bracket-match{position:relative;min-height:74px;padding:6px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--muted);cursor:pointer}.bracket-match.is-complete{border-left-color:var(--good)}.bracket-match.is-pending{opacity:.72}.bracket-team-line{display:grid;grid-template-columns:22px 1fr 24px;align-items:center;gap:6px;min-height:28px;font-size:12px}.bracket-team-line.winner{font-weight:800;color:var(--text)}.bracket-team-line.loser{color:var(--muted)}.bracket-team-line img{width:20px;height:20px;object-fit:contain}.bracket-team-line .score{color:var(--muted);text-align:right}.bracket-open-match{padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}.bracket-title{padding:14px 16px 0;font-size:14px}.bracket-champion{padding:10px 16px;color:var(--good);font-weight:700}.bracket-empty{padding:20px;color:var(--muted)}.bracket-match:focus-within,.bracket-match:hover{border-color:var(--main)}@media(max-width:800px){.bracket-form{grid-template-columns:1fr}.bracket-team-choices{grid-template-columns:repeat(2,minmax(0,1fr))}}';
+document.head.append(bracketStyle);
+function renderBracketTeamChoices(){
+ const choices=document.querySelector('#bracketTeamChoices');
+ choices.innerHTML=teams.map(team=>`<label class="bracket-team-choice"><input type="checkbox" value="${esc(team)}"><span>${esc(team)}</span></label>`).join('');
+ document.querySelector('#bracketSize').onchange=()=>{document.querySelector('#bracketRequiredCount').textContent=document.querySelector('#bracketSize').value;};
+}
+function bracketGroups(){
+ const groups=new Map();matches.filter(match=>match.bracketId).forEach(match=>{if(!groups.has(match.bracketId))groups.set(match.bracketId,[]);groups.get(match.bracketId).push(match);});
+ return [...groups].map(([id,roundMatches])=>({id,matches:roundMatches,name:roundMatches[0].bracketName||roundMatches[0].event||'League bracket',size:Number(roundMatches[0].bracketSize)||4}));
+}
+function bracketRoundLabel(size,index){const remaining=size/(2**index);if(remaining===2)return'Grand Final';if(remaining===4)return'Semi-finals';if(remaining===8)return'Quarter-finals';if(remaining===16)return'Round of 16';return`Round ${index+1}`;}
+function bracketWinner(match){return match?.status==='completed'&&Number(match.scoreOne)!==Number(match.scoreTwo)?(Number(match.scoreOne)>Number(match.scoreTwo)?match.one:match.two):'';}
+function shuffleBracketTeams(selected){const shuffled=[...selected];for(let index=shuffled.length-1;index>0;index--){const swapIndex=Math.floor(Math.random()*(index+1));[shuffled[index],shuffled[swapIndex]]=[shuffled[swapIndex],shuffled[index]];}return shuffled;}
+function renderBrackets(){
+ const list=document.querySelector('#bracketList'),groups=bracketGroups();
+ if(!groups.length){list.innerHTML='<div class="bracket-empty">No league brackets created yet.</div>';return;}
+ list.innerHTML=groups.map(group=>{
+  const roundCount=Math.log2(group.size),championMatch=group.matches.find(match=>match.bracketRound===roundCount-1),champion=bracketWinner(championMatch);
+  const rounds=Array.from({length:roundCount},(_,roundIndex)=>{
+   const roundMatches=group.matches.filter(match=>match.bracketRound===roundIndex).sort((a,b)=>a.bracketSlot-b.bracketSlot);
+   return`<section class="bracket-round"><h3>${bracketRoundLabel(group.size,roundIndex)}</h3>${roundMatches.map(match=>{
+    const winner=bracketWinner(match),complete=Boolean(winner),teamLine=(team,score,isWinner)=>`<div class="bracket-team-line ${complete?(isWinner?'winner':'loser'):''}">${team?logo(team):'<span></span>'}<span>${esc(team||'Waiting for winner')}</span><span class="score">${match.status==='completed'?esc(score):''}</span></div>`;
+    return`<button type="button" class="bracket-match ${complete?'is-complete':'is-pending'}" data-bracket-match="${esc(match.id)}" aria-label="Open ${esc(match.one||'TBD')} versus ${esc(match.two||'TBD')}">${teamLine(match.one,match.scoreOne,winner===match.one)}${teamLine(match.two,match.scoreTwo,winner===match.two)}</button>`;
+   }).join('')}</section>`;
+  }).join('');
+  return`<div class="bracket-title"><strong>${esc(group.name)}</strong> · ${group.size}-team elimination bracket</div>${champion?`<div class="bracket-champion">Champion: ${esc(champion)} · +100 ERS</div>`:''}<div class="bracket-board-wrap"><div class="bracket-board">${rounds}</div></div>`;
+ }).join('');
+}
+function updateBracketProgress(bracketId){
+ const group=bracketGroups().find(item=>item.id===bracketId);if(!group)return;
+ const roundCount=Math.log2(group.size),roundMatches=group.matches;
+ for(let roundIndex=1;roundIndex<roundCount;roundIndex++){
+  roundMatches.filter(match=>match.bracketRound===roundIndex).forEach(next=>{
+   const feeder=roundMatches.filter(match=>match.bracketRound===roundIndex-1&&Math.floor(match.bracketSlot/2)===next.bracketSlot).sort((a,b)=>a.bracketSlot-b.bracketSlot);
+   const nextOne=bracketWinner(feeder[0]),nextTwo=bracketWinner(feeder[1]);
+   if(next.one!==nextOne||next.two!==nextTwo){
+    next.one=nextOne;next.two=nextTwo;next.status='scheduled';next.scoreOne=null;next.scoreTwo=null;delete next.completedAt;next.mapResults=[];delete next.ersAward;delete next.ersTeam;delete next.secondaryErsAward;delete next.secondaryErsTeam;delete next.awardedPlayerIds;delete next.matchMvpId;delete next.tournamentMvpId;
+   }
+  });
+ }
+ roundMatches.filter(match=>match.status==='completed'&&Number(match.scoreOne)!==Number(match.scoreTwo)).forEach(match=>{
+  const remaining=group.size/(2**match.bracketRound),winner=bracketWinner(match),loser=winner===match.one?match.two:match.one;
+  if(remaining===2){match.ersAward='tournament-winner';match.ersTeam=winner;match.awardedPlayerIds=players.filter(player=>player.team===winner).map(player=>player.id);match.secondaryErsAward='runner-up';match.secondaryErsTeam=loser;}
+  else if(remaining===4){match.ersAward='semi-finalist';match.ersTeam=loser;}
+  else if(remaining===8){match.ersAward='quarter-finalist';match.ersTeam=loser;}
+ });
+}
+document.querySelector('#bracketSize').value='4';renderBracketTeamChoices();
+document.querySelector('#randomizeBracketTeams').addEventListener('click',()=>{const size=Number(document.querySelector('#bracketSize').value),shuffled=shuffleBracketTeams(teams),picked=new Set(shuffled.slice(0,size));document.querySelectorAll('#bracketTeamChoices input').forEach(input=>{input.checked=picked.has(input.value);});document.querySelector('#bracketFeedback').textContent=`Randomly selected ${size} teams. Their first-round positions will also be randomized.`;});
+document.querySelector('#bracketForm').addEventListener('submit',event=>{
+ event.preventDefault();const name=document.querySelector('#bracketName').value.trim(),size=Number(document.querySelector('#bracketSize').value),selected=[...document.querySelectorAll('#bracketTeamChoices input:checked')].map(input=>input.value),feedback=document.querySelector('#bracketFeedback');
+ if(selected.length!==size){feedback.textContent=`Select exactly ${size} teams.`;return;}
+ const bracketTeams=shuffleBracketTeams(selected),bracketId=crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,roundCount=Math.log2(size);
+ for(let roundIndex=0;roundIndex<roundCount;roundIndex++){
+  const matchCount=size/(2**(roundIndex+1));
+  for(let bracketSlot=0;bracketSlot<matchCount;bracketSlot++){
+   matches.push({id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}-${roundIndex}-${bracketSlot}`,bracketId,bracketName:name,bracketSize:size,bracketRound:roundIndex,bracketSlot,one:roundIndex===0?bracketTeams[bracketSlot*2]:'',two:roundIndex===0?bracketTeams[bracketSlot*2+1]:'',type:'League',event:name,date:'',status:'scheduled',scoreOne:null,scoreTwo:null,mapResults:[]});
+  }
+ }
+ saveLeagueResults();event.target.reset();document.querySelector('#bracketSize').value='4';renderBracketTeamChoices();feedback.textContent=`${name} bracket created.`;render();go('matches');
+});
+document.querySelector('#bracketList').addEventListener('click',event=>{const button=event.target.closest('[data-bracket-match]');if(button)showMatchDetails(button.dataset.bracketMatch);});
+fixtureSection.addEventListener('click',event=>{
+ const saveButton=event.target.closest('[data-save-match]');if(!saveButton)return;
+ const match=matches.find(item=>item.id===saveButton.dataset.saveMatch);if(!match?.bracketId)return;
+ if(match.scoreOne===match.scoreTwo){match.status='scheduled';match.scoreOne=null;match.scoreTwo=null;document.querySelector('#matchFeedback').textContent='Bracket matches cannot end in a draw. Enter a winner and try again.';saveLeagueResults();render();return;}
+ updateBracketProgress(match.bracketId);saveLeagueResults();render();
+});
+const renderWithBrackets=render;
+render=function(){renderWithBrackets();renderBrackets();};
+renderBrackets();
+syncMatchSelectors();
+const showProfileWithImpact=showPlayerProfile;
+showPlayerProfile=function(id){
+ showProfileWithImpact(id);const player=players.find(item=>item.id===id),profile=document.querySelector('#playerProfile .player-profile');if(!player||!profile)return;
+ const stats=playerStats(player),summary=profile.querySelector('.player-profile__identity .sub'),statGrid=profile.querySelector('.player-profile__stats');
+ if(summary)summary.innerHTML=`${countryFlagMarkup(player.country)}<span>${stats.games} recorded games</span>`;
+ statGrid.insertAdjacentHTML('beforeend',`<div class="card impact-card"><div class="stat">Impact rating</div><div class="number">${stats.impact.toFixed(2)}<small>/2.00</small></div><div class="impact-meter"><span style="width:${stats.impact*50}%"></span></div><div class="impact-caption">Based on recorded K/D/A</div></div>`);
+};
+const showMatchWithCountryFlags=showMatchDetails;
+showMatchDetails=function(id){
+ showMatchWithCountryFlags(id);
+ document.querySelectorAll('#matchDetail .match-detail__games tbody tr').forEach(row=>{const cell=row.cells[0],player=cell&&findPlayer(cell.textContent.trim());if(player)cell.innerHTML=`${countryFlagMarkup(player.country)}${esc(player.name)}`;});
+ ['#matchMvp','#tournamentMvp'].forEach(selector=>document.querySelectorAll(`${selector} option`).forEach(option=>{const player=players.find(item=>item.id===option.value);if(player)option.textContent=`${countryCode(player.country)?countryCode(player.country).toUpperCase()+' · ':''}${player.name} · ${player.team}`;}));
+};
+render();
+</script>
+<script>
+const showPlayerProfileWithImpact=showPlayerProfile;
+const playerProfileToolsStyle=document.createElement('style');
+playerProfileToolsStyle.textContent='.player-honors-editor{padding:14px;border-bottom:1px solid var(--line)}.player-honors-editor h3{margin:0 0 10px;font-size:14px}.player-honor-form,.player-game-edit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.player-honor-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.player-honor-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--bg);background:var(--bg);font-size:12px;font-weight:700}.player-honor-item button,.profile-game-actions button{border:1px solid var(--danger);background:transparent;color:var(--danger);padding:4px 7px;cursor:pointer}.profile-game-actions{display:flex;gap:6px}.profile-game-actions button:first-child{border-color:var(--line);color:var(--text)}.player-game-edit{padding:12px!important}.player-game-edit-grid{margin-bottom:10px}.player-game-edit label,.player-honor-form label{display:grid;gap:5px;color:var(--muted);font-size:10px;text-transform:uppercase}.player-game-edit input,.player-game-edit select,.player-honor-form input,.player-honor-form select{width:100%;padding:8px;background:var(--bg);border:1px solid var(--line);color:var(--text)}.player-game-edit-actions{display:flex;gap:7px}.player-honors-editor .empty{padding:8px 0;text-align:left}.cloud-viewer .player-honors-editor,.cloud-viewer .profile-game-actions,.cloud-viewer .player-game-edit-actions{display:none!important}@media(max-width:700px){.player-honor-form,.player-game-edit-grid{grid-template-columns:1fr 1fr}}';
+document.head.append(playerProfileToolsStyle);
+function manualHonorsFor(player){return Array.isArray(player.manualHonors)?player.manualHonors:[];}
+function renderProfileHonorsEditor(player){
+ const labels={title:'League title',tournamentMvp:'Tournament MVP',matchMvp:'Match MVP'},icons={title:'🏆',tournamentMvp:'★',matchMvp:'★'};
+ const items=manualHonorsFor(player).map(honor=>`<div class="player-honor-item"><span>${esc(labels[honor.type]||'Honor')} · ${esc(honor.event||'Untitled')}${honor.date?` (${esc(new Date(honor.date).getFullYear())})`:''} <span aria-hidden="true">${icons[honor.type]||''}</span></span><button type="button" data-remove-manual-honor="${esc(honor.id)}" aria-label="Remove ${esc(labels[honor.type]||'honor')}">Remove</button></div>`).join('');
+ return `<section class="player-honors-editor"><h3>Manage player honors</h3><form class="player-honor-form" id="manualHonorForm"><label>Honor type<select name="type"><option value="title">League title</option><option value="tournamentMvp">Tournament MVP</option><option value="matchMvp">Match MVP</option></select></label><label>Competition / match<input name="event" required maxlength="100" placeholder="e.g. Spring League 2026"></label><label>Year (optional)<input name="year" type="number" min="1900" max="9999" step="1" placeholder="2026"></label><div class="field full"><button class="btn" type="submit">Add honor</button></div></form><div class="player-honor-list">${items||'<span class="empty">No manually added honors yet.</span>'}</div></section>`;
+}
+function renderProfileGameHistory(player){
+ const table=document.querySelector('#playerProfile .player-profile__games table');
+ if(!table)return;
+ const heading=table.querySelector('thead tr');
+ if(heading&&!heading.querySelector('[data-game-actions-heading]'))heading.insertAdjacentHTML('beforeend','<th data-game-actions-heading>Actions</th>');
+ const body=table.querySelector('tbody'),history=games.map((game,index)=>({game,index})).filter(item=>playerKey(item.game.player)===playerKey(player.name));
+ body.innerHTML=history.map(({game,index})=>{const result=kda(game.kills,game.deaths,game.assists),tier=tierFor(game),linkedMatch=matches.find(match=>match.id===game.matchId);return`<tr data-player-game="${index}"><td>${linkedMatch?`<button type="button" class="player-history-match-link" data-open-linked-match="${esc(linkedMatch.id)}">${esc(game.game)}</button>`:esc(game.game)}</td><td>${esc(game.team)}</td><td>${esc(game.kills)}/${esc(game.deaths)}/${esc(game.assists)}</td><td>${result.ratio}</td><td class="rank-${esc(tier)}">Tier ${esc(tier)}</td><td class="profile-game-actions"><button type="button" data-edit-player-game="${index}">Edit</button><button type="button" data-delete-player-game="${index}">Delete</button></td></tr>`;}).join('')||'<tr><td colspan="6" class="empty">No games recorded yet.</td></tr>';
+}
+function editPlayerGameRow(index){
+ const game=games[index],row=document.querySelector(`#playerProfile [data-player-game="${index}"]`);
+ if(!game||!row)return;
+ const gameTeams=[...new Set([...teams,game.team])];
+ row.innerHTML=`<td colspan="6" class="player-game-edit"><form data-player-game-form="${index}"><div class="player-game-edit-grid"><label>Game / map<input name="game" required maxlength="100" value="${esc(game.game)}"></label><label>Team<select name="team">${gameTeams.map(team=>`<option value="${esc(team)}"${team===game.team?' selected':''}>${esc(team)}</option>`).join('')}</select></label><label>Kills<input name="kills" type="number" min="0" step="1" required value="${esc(game.kills)}"></label><label>Deaths<input name="deaths" type="number" min="0" step="1" required value="${esc(game.deaths)}"></label><label>Assists<input name="assists" type="number" min="0" step="1" required value="${esc(game.assists)}"></label><label>Tier<select name="tier"><option value="auto"${game.tier==='auto'?' selected':''}>Automatic</option>${['S','A','B','C','D'].map(tier=>`<option value="${tier}"${game.tier===tier?' selected':''}>Manual ${tier}</option>`).join('')}</select></label></div><div class="player-game-edit-actions"><button class="btn primary" type="submit">Save changes</button><button class="btn" type="button" data-cancel-player-game="${index}">Cancel</button></div></form></td>`;
+}
+showPlayerProfile=function(id){
+ showPlayerProfileWithImpact(id);
+ const player=players.find(item=>item.id===id),profile=document.querySelector('#playerProfile .player-profile');
+ if(!player||!profile)return;
+ const honors=profile.querySelector('.player-honors');
+ if(honors)honors.insertAdjacentHTML('afterend',renderProfileHonorsEditor(player));
+ renderProfileGameHistory(player);
+};
+document.querySelector('#playerProfile').addEventListener('submit',event=>{
+ const honorForm=event.target.closest('#manualHonorForm');
+ if(honorForm){
+  event.preventDefault();if(cloudRole!=='editor')return;
+  const player=players.find(item=>item.id===document.querySelector('#playerEditForm')?.dataset.playerId);
+  if(!player)return;
+  const data=new FormData(honorForm),type=String(data.get('type')),eventName=String(data.get('event')||'').trim(),year=String(data.get('year')||'').trim();
+  if(!['title','tournamentMvp','matchMvp'].includes(type)||!eventName||eventName.length>100||(year&&(!/^\d{4}$/.test(year)||Number(year)<1900||Number(year)>9999)))return;
+  player.manualHonors=manualHonorsFor(player);
+  player.manualHonors.push({id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,type,event:eventName,date:year?`${year}-01-01`:''});
+  savePlayers();render();showPlayerProfile(player.id);return;
+ }
+ const gameForm=event.target.closest('[data-player-game-form]');
+ if(!gameForm)return;
+ event.preventDefault();if(cloudRole!=='editor')return;
+ const index=Number(gameForm.dataset.playerGameForm),game=games[index],data=new FormData(gameForm);
+ if(!game)return;
+ game.game=String(data.get('game')).trim();game.team=String(data.get('team'));game.kills=Number(data.get('kills'));game.deaths=Number(data.get('deaths'));game.assists=Number(data.get('assists'));game.tier=String(data.get('tier'));
+ saveLeagueResults();const player=findPlayer(game.player);render();if(player)showPlayerProfile(player.id);
+});
+document.querySelector('#playerProfile').addEventListener('click',event=>{
+ if(cloudRole!=='editor')return;
+ const removeHonor=event.target.closest('[data-remove-manual-honor]');
+ if(removeHonor){const player=players.find(item=>item.id===document.querySelector('#playerEditForm')?.dataset.playerId);if(!player)return;player.manualHonors=manualHonorsFor(player).filter(honor=>honor.id!==removeHonor.dataset.removeManualHonor);savePlayers();render();showPlayerProfile(player.id);return;}
+ const editButton=event.target.closest('[data-edit-player-game]');
+ if(editButton){editPlayerGameRow(Number(editButton.dataset.editPlayerGame));return;}
+ const cancelButton=event.target.closest('[data-cancel-player-game]');
+ if(cancelButton){const player=players.find(item=>item.id===document.querySelector('#playerEditForm')?.dataset.playerId);if(player)showPlayerProfile(player.id);return;}
+ const deleteButton=event.target.closest('[data-delete-player-game]');
+ if(deleteButton){const index=Number(deleteButton.dataset.deletePlayerGame),game=games[index];if(!game||!confirm('Delete this game from the player history?'))return;const player=findPlayer(game.player);games.splice(index,1);saveLeagueResults();render();if(player)showPlayerProfile(player.id);}
+});
+</script>
+<script>
+const playerSortState={key:'impact',direction:'desc'};
+const playerSortFields=[
+ {key:'games',label:'Games',value:player=>playerStats(player).games},
+ {key:'average',label:'Average KDA',value:player=>Number(playerStats(player).average)},
+ {key:'impact',label:'Impact',value:player=>playerStats(player).impact},
+ {key:'best',label:'Best tier',value:player=>({S:5,A:4,B:3,C:2,D:1}[playerStats(player).best]||0)},
+ {key:'marketValue',label:'Market value',value:player=>calculatedMarketValue(player)}
+];
+function calculatedMarketValue(player){
+ if(player.team==='Free Agent')return 0;
+ const stats=playerStats(player),gameScore=Math.min(stats.games/50,1),kdaScore=Math.min(Number(stats.average)/3,1),impactScore=stats.impact/2,tierScore=({S:1,A:.8,B:.6,C:.4,D:.2}[stats.best]||0);
+ const performance=gameScore*.25+kdaScore*.3+impactScore*.25+tierScore*.2;
+ return Math.max(50000,Math.min(500000,Math.round((50000+performance*450000)/1000)*1000));
+}
+function formatPlayerMarketValue(player){return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(calculatedMarketValue(player));}
+const renderFreeAgentDirectoryWithMarket=renderFreeAgentDirectory;
+renderFreeAgentDirectory=function(){
+ renderFreeAgentDirectoryWithMarket();
+ document.querySelectorAll('#freeAgentList .free-agent-row').forEach(row=>{
+  const player=players.find(item=>item.id===row.querySelector('[data-player-id]')?.dataset.playerId);
+  const value=row.querySelector('span');
+  if(player&&value)value.textContent=formatPlayerMarketValue(player);
+ });
+};
+function refreshPlayerRanking(){
+ const table=document.querySelector('#playerRankList')?.closest('table');
+ if(!table)return;
+ const body=table.querySelector('#playerRankList');
+ body.querySelector('[data-player-search-empty]')?.remove();
+ const rowById=new Map([...body.querySelectorAll('tr')].map(row=>[row.querySelector('[data-player-id]')?.dataset.playerId,row]).filter(([id])=>id));
+ const query=(document.querySelector('#playerRankSearch')?.value||'').trim().toLocaleLowerCase();
+ const playersWithRows=players.filter(player=>rowById.has(player.id)&&player.name.toLocaleLowerCase().includes(query));
+ const field=playerSortFields.find(item=>item.key===playerSortState.key)||playerSortFields[2];
+ const visibleIds=new Set(playersWithRows.map(player=>player.id));
+ rowById.forEach((row,id)=>{row.hidden=!visibleIds.has(id);});
+ playersWithRows.sort((left,right)=>{
+  const difference=field.value(left)-field.value(right);
+  return(difference===0?left.name.localeCompare(right.name):difference*(playerSortState.direction==='asc'?1:-1));
+ });
+ playersWithRows.forEach((player,index)=>{
+  const row=rowById.get(player.id);
+  row.cells[0].textContent=`#${index+1}`;
+  row.cells[row.cells.length-1].textContent=formatPlayerMarketValue(player);
+  body.append(row);
+ });
+ if(query&&!playersWithRows.length)body.insertAdjacentHTML('beforeend','<tr data-player-search-empty><td colspan="8" class="empty">No players match that username.</td></tr>');
+ playerSortFields.forEach(item=>{
+  const heading=table.querySelector(`[data-player-sort="${item.key}"]`)?.closest('th');
+  if(!heading)return;
+  const active=item.key===playerSortState.key;
+  heading.setAttribute('aria-sort',active?(playerSortState.direction==='asc'?'ascending':'descending'):'none');
+  const button=heading.querySelector('button');
+  if(button)button.textContent=`${item.label}${active?(playerSortState.direction==='asc'?' ↑':' ↓'):''}`;
+ });
+}
+function preparePlayerRankingSort(){
+ const table=document.querySelector('#playerRankList')?.closest('table');
+ if(!table||table.dataset.sortReady)return;
+ table.dataset.sortReady='true';
+ playerSortFields.forEach(item=>{
+  const heading=[...table.tHead.rows[0].cells].find(cell=>cell.textContent.trim()===item.label);
+  if(heading)heading.innerHTML=`<button type="button" class="player-sort" data-player-sort="${item.key}">${item.label}</button>`;
+ });
+ table.addEventListener('click',event=>{
+  const button=event.target.closest('[data-player-sort]');
+  if(!button)return;
+  const key=button.dataset.playerSort;
+  if(playerSortState.key===key)playerSortState.direction=playerSortState.direction==='desc'?'asc':'desc';
+  else{playerSortState.key=key;playerSortState.direction='desc';}
+  refreshPlayerRanking();
+ });
+ document.querySelector('#playerRankSearch')?.addEventListener('input',refreshPlayerRanking);
+}
+const playerRankHeader=document.querySelector('#playerRankList')?.closest('.section')?.querySelector('.sectionhead');
+if(playerRankHeader)playerRankHeader.insertAdjacentHTML('beforeend','<label class="player-rank-search"><span>Search username</span><input id="playerRankSearch" type="search" autocomplete="off" placeholder="Enter a player name"></label>');
+const playerSortStyle=document.createElement('style');
+playerSortStyle.textContent='.player-sort{padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:700;text-transform:inherit;letter-spacing:inherit;cursor:pointer}.player-sort:hover,.player-sort:focus-visible{color:var(--main)}.player-rank-search{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;text-transform:uppercase}.player-rank-search input{width:min(240px,45vw);padding:8px 10px;border:1px solid var(--line);border-radius:3px;background:var(--bg);color:var(--text)}.player-rank-team{display:flex;align-items:center;gap:7px}.player-rank-team .logo{width:22px;height:22px;flex:0 0 22px;padding:2px}';
+document.head.append(playerSortStyle);
+function decoratePlayerRankingTeams(){
+ document.querySelectorAll('#playerRankList tr').forEach(row=>{
+  const playerId=row.querySelector('[data-player-id]')?.dataset.playerId,player=players.find(item=>item.id===playerId),cell=row.cells[2];
+  if(player&&cell)cell.innerHTML=`<span class="player-rank-team">${logo(player.team)}<span>${esc(player.team)}</span></span>`;
+ });
+}
+const renderPlayerFeaturesWithMarket=renderPlayerFeatures;
+renderPlayerFeatures=function(){renderPlayerFeaturesWithMarket();decoratePlayerRankingTeams();preparePlayerRankingSort();refreshPlayerRanking();};
+const showPlayerProfileWithMarket=showPlayerProfile;
+showPlayerProfile=function(id){
+ showPlayerProfileWithMarket(id);
+ const player=players.find(item=>item.id===id),profile=document.querySelector('#playerProfile .player-profile');
+ if(!player||!profile)return;
+ const value=formatPlayerMarketValue(player),valueField=profile.querySelector('#profileValue'),valueCard=[...profile.querySelectorAll('.player-profile__stats .card')].find(card=>card.querySelector('.stat')?.textContent.trim()==='Market value');
+ if(valueField){valueField.value=calculatedMarketValue(player);valueField.readOnly=true;valueField.setAttribute('aria-label','Automatically calculated market value in USD');}
+ if(valueCard)valueCard.querySelector('.number').textContent=value;
+ const headerValue=profile.querySelector('.player-profile__header > .point-pill');
+ if(headerValue)headerValue.textContent=value;
+};
+const registrationMarketField=document.querySelector('#registerValue');
+if(registrationMarketField){registrationMarketField.readOnly=true;registrationMarketField.placeholder='Calculated automatically';registrationMarketField.value='';registrationMarketField.previousElementSibling.textContent='Market value (calculated)';}
+const profileCareerAndMatchStyle=document.createElement('style');
+profileCareerAndMatchStyle.textContent='.player-career-totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 14px 14px}.player-career-total{padding:10px 12px;border:1px solid var(--line);background:var(--panel2)}.player-career-total small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.6px}.player-career-total strong{display:block;margin-top:4px;font-size:19px;font-variant-numeric:tabular-nums}.player-history-match-link{padding:0;border:0;background:transparent;color:var(--main);font:inherit;text-align:left;text-decoration:underline;text-underline-offset:2px;cursor:pointer}.player-history-match-link:hover{color:var(--good)}.match-team-stat-group{margin:10px 0;border:1px solid var(--line);background:var(--bg)}.match-team-stat-group h5{display:flex;align-items:center;gap:8px;margin:0;padding:8px 11px;border-bottom:1px solid var(--line);background:var(--panel2);font-size:13px}.match-team-stat-group__logo{width:22px;height:22px;object-fit:contain}.match-team-stat-group table{font-size:12px}.match-team-stat-group th{padding:8px 10px}.match-team-stat-group td{padding:8px 10px}.match-team-stat-group tbody tr:nth-child(odd){background:rgba(255,255,255,.025)}@media(max-width:560px){.player-career-totals{grid-template-columns:1fr}}';
+document.head.append(profileCareerAndMatchStyle);
+const showProfileWithCareerTotals=showPlayerProfile;
+showPlayerProfile=function(id){
+ showProfileWithCareerTotals(id);
+ const player=players.find(item=>item.id===id),profile=document.querySelector('#playerProfile .player-profile');
+ if(!player||!profile)return;
+ const totals=games.filter(game=>playerKey(game.player)===playerKey(player.name)).reduce((sum,game)=>({kills:sum.kills+(Number(game.kills)||0),deaths:sum.deaths+(Number(game.deaths)||0),assists:sum.assists+(Number(game.assists)||0)}),{kills:0,deaths:0,assists:0});
+ profile.querySelector('.player-profile__stats')?.insertAdjacentHTML('afterend',`<section class="player-career-totals" aria-label="Career K/D/A totals"><div class="player-career-total"><small>Career kills</small><strong>${totals.kills}</strong></div><div class="player-career-total"><small>Career deaths</small><strong>${totals.deaths}</strong></div><div class="player-career-total"><small>Career assists</small><strong>${totals.assists}</strong></div></section>`);
+};
+document.querySelector('#playerProfile').addEventListener('click',event=>{
+ const button=event.target.closest('[data-open-linked-match]');
+ if(!button)return;
+ const match=matches.find(item=>item.id===button.dataset.openLinkedMatch);
+ if(!match)return;
+ go('matches');showMatchDetails(match.id);
+});
+renderPlayerFeatures();
+</script>
+</body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;500;600;700;800&display=swap');
+:root{--main:#77c9b3;--bg:#101820;--panel:#19242d;--panel2:#202e38;--text:#e7edf0;--muted:#91a0a8;--line:#2c3b45;--good:#a7d987;--danger:#e77876}
+body{font-family:'Roboto Condensed','Arial Narrow',Arial,sans-serif;background:var(--bg);background-image:linear-gradient(180deg,#131e27 0,#101820 230px);font-size:14px}
+.app{min-height:100vh}
+.side{position:sticky;top:0;width:218px;height:100vh;padding:20px 12px;background:#131d26;border-right:1px solid #293943}
+.brand{padding:2px 12px 24px;font-family:'Roboto Condensed',sans-serif;font-size:24px;font-weight:800;letter-spacing:0}
+.brand b{color:var(--main)}
+.season{margin:0 4px 18px;padding:11px 12px;background:#1b2832;border-color:#30414b;border-radius:3px}
+.nav{padding:15px 12px 7px;color:#73838d;font-size:10px;letter-spacing:.8px}
+#nav{display:block}
+#nav>button{display:block;width:100%;margin:2px 0;padding:10px 12px;border:1px solid transparent;border-radius:3px;background:transparent;color:#aab6bc;text-align:left;font-weight:600;cursor:pointer}
+#nav>button:hover{background:#1c2b34;color:#eaf1f2}
+#nav>button.active{border-left:3px solid var(--main);background:#203139;color:#eaf1f2;font-weight:700;padding-left:10px}
+#nav>div.nav{padding-top:19px}
+.main{max-width:1500px;padding:25px 30px}
+.top{margin-bottom:20px}
+.eyebrow{color:var(--main);font-size:11px;letter-spacing:1.1px}
+.title{font-size:29px;font-weight:700;letter-spacing:0;margin:4px 0}
+.sub{font-size:13px;color:#9aa8ae}
+.btn{padding:8px 12px;border:1px solid #4d8478;border-radius:3px;color:#a5d9c9;font-weight:700}
+.btn:hover,.btn.primary{background:var(--main);border-color:var(--main);color:#102019}
+.grid{gap:10px;margin-bottom:16px}
+.card{padding:14px 16px;border:1px solid var(--line);border-radius:3px;background:#19242d;box-shadow:inset 0 2px 0 rgba(255,255,255,.015)}
+.stat{font-size:12px;color:#9ba9af}
+.number{margin-top:5px;color:#f1f5f6;font-size:26px;font-weight:700}
+.section{margin-bottom:14px;border:1px solid #2b3a44;border-radius:3px;background:#19242d;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.sectionhead{min-height:48px;padding:12px 15px;border-bottom:1px solid var(--line);background:#1c2932}
+.sectionhead h2{font-size:15px;font-weight:700}
+table{font-size:13px}
+th{padding:10px 13px;background:#17222a;color:#8f9da4;font-size:10px;letter-spacing:.7px}
+td{padding:10px 13px;border-bottom:1px solid rgba(54,70,80,.65)}
+tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+tbody tr:hover{background:rgba(119,201,179,.075)}
+tr:last-child td{border-bottom:0}
+.team{gap:9px}
+.logo{width:28px;height:28px;border-radius:3px;background:#121b22;border-color:#34434c;padding:3px}
+.team-open{display:flex;align-items:center;gap:9px;padding:0;border:0;background:transparent;color:var(--text);font-weight:700;cursor:pointer;text-align:left}
+.team-open:hover{color:var(--main)}
+.team-open:focus-visible{outline:2px solid var(--main);outline-offset:3px}
+.badge{border-radius:2px;background:rgba(119,201,179,.12);color:#9fd7c5}
+.team-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px}
+.team-card{padding:12px;border:1px solid #30404a;border-radius:3px;background:#202e38;transition:border-color .16s,background .16s}
+.team-card:hover,.team-card.selected{border-color:#67aa99;background:#263943;box-shadow:inset 3px 0 0 var(--main)}
+.team-card__meta{margin-top:8px;padding-top:7px;border-color:#34454e}
+.point-pill{border-radius:3px;background:rgba(119,201,179,.12);border-color:rgba(119,201,179,.3);color:#a5ddca}
+.team-profile{padding:14px}
+.team-profile__header{padding:15px;border:1px solid #30404a;border-radius:3px;background:#202e38}
+.team-hero{width:54px;height:54px}
+.team-profile__body{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.panel{padding:13px;border:1px solid #30404a;border-radius:3px;background:#1c2932}
+.panel h3{margin-bottom:10px;font-size:14px}
+.team-players li,.team-transfers li{padding:9px 10px;border:1px solid #2d3c46;border-radius:2px;background:#17232b}
+.team-transfers small{line-height:1.45}
+.form{gap:12px;padding:16px}
+.field label,.color label{color:#9ba8ae;font-size:10px;letter-spacing:.5px}
+.field input,.field select{padding:10px;border-color:#34454f;border-radius:3px;background:#111b22;color:var(--text)}
+.field input:focus,.field select:focus{outline:2px solid rgba(119,201,179,.35);border-color:var(--main)}
+.remove{border-radius:2px}
+#rankings.content.active{display:grid;grid-template-columns:minmax(340px,.9fr) minmax(0,1.35fr);align-items:start;gap:0 14px}
+#rankings>.top{grid-column:1/-1}
+#rankings>.section{min-width:0}
+#rankings>.section:nth-of-type(2){grid-column:1}
+#rankings>.section:nth-of-type(3){grid-column:2}
+@media(max-width:1000px){.main{padding:20px}.team-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.team-profile__body{grid-template-columns:1fr 1fr}#rankings.content.active{grid-template-columns:1fr}#rankings>.section:nth-of-type(2),#rankings>.section:nth-of-type(3){grid-column:1}}
+@media(max-width:800px){.side{width:68px;padding:15px 7px}.brand{font-size:0;padding:8px}.brand b{font-size:20px}.season,.nav-title{display:none}#nav>button{height:42px;padding:9px 0;font-size:0;text-align:center}#nav>button.active{padding-left:0;border-left:0;border-bottom:2px solid var(--main)}.main{padding:18px 12px}.top{display:block}.actions{margin-top:13px}.team-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+body{background-color:var(--bg);background-image:linear-gradient(180deg,color-mix(in srgb,var(--bg) 84%,white) 0,var(--bg) 230px)}
+.side{background:var(--panel);border-color:var(--line)}
+.season,.sectionhead,.team-profile__header,.panel,.team-card{background-color:var(--panel2)}
+.card,.section{background-color:var(--panel);border-color:var(--line)}
+th,.team-players li,.team-transfers li{background-color:var(--bg)}
+.team-card:hover,.team-card.selected{border-color:var(--main);background-color:var(--panel2)}
+#themeForm{grid-template-columns:repeat(4,minmax(0,1fr))}
+.color input{width:64px;height:38px;padding:2px;border:1px solid var(--line);border-radius:3px;background:var(--bg);cursor:pointer}
+@media(max-width:560px){.grid,.form,.player-form{grid-template-columns:1fr}#themeForm{grid-template-columns:repeat(2,minmax(0,1fr))}.title{font-size:25px}.team-grid,.team-profile__body{grid-template-columns:1fr}.team-profile__header{gap:12px}table{min-width:620px}.section{overflow-x:auto}.sectionhead{position:sticky;left:0}}
+</style>
+<style>
+:root{--main:#e2b866;--bg:#0b1012;--panel:#11191c;--panel2:#182326;--text:#edf3ef;--muted:#94a49f;--line:#2a3938;--good:#79d6ad;--danger:#ec7777}
+body{position:relative;background-color:var(--bg);background-image:linear-gradient(180deg,#121b1c 0,#0b1012 300px);font-family:'Roboto Condensed','Arial Narrow',Arial,sans-serif;font-size:14px}
+body::before{position:fixed;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(rgba(151,186,169,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(151,186,169,.035) 1px,transparent 1px);background-size:36px 36px;content:''}
+.side{width:230px;background:#101719;border-color:#293634;box-shadow:6px 0 24px rgba(0,0,0,.12)}
+.brand{position:relative;margin-bottom:8px;padding:4px 12px 23px;font-size:25px;letter-spacing:.3px}
+.brand::after{position:absolute;bottom:13px;left:12px;width:40px;height:3px;background:var(--main);content:''}
+.season{border-radius:4px;background:#172220;border-color:#31423e;color:#99aaa3}
+.season strong{color:#f0f4ef}
+.nav{padding-top:17px;color:#71847c;letter-spacing:1px}
+#nav>button{min-height:40px;margin:3px 0;padding:10px 12px;border-radius:4px;color:#a6b5af;transition:background .15s,border-color .15s,color .15s}
+#nav>button:hover{background:#1a2825;color:#e8f1eb}
+#nav>button.active{border-left:3px solid var(--main);background:#24312b;color:#f6f0df;padding-left:10px}
+.main{max-width:1600px;padding:30px 38px}
+.cloud-account{margin:0 0 22px;padding:10px 12px;border:1px solid var(--line);border-radius:5px;background:rgba(20,30,29,.9)}
+.cloud-account strong{color:var(--good);letter-spacing:.6px;text-transform:uppercase}
+.top{margin-bottom:24px}
+.eyebrow{color:var(--good);letter-spacing:1.6px}
+.title{margin:6px 0 4px;color:#f3f5ef;font-size:32px;font-weight:700}
+.sub{color:#9aa9a2;line-height:1.5}
+.btn{padding:9px 13px;border-color:#506d5d;border-radius:4px;color:#b8d7c4;transition:background .15s,border-color .15s,transform .15s}
+.btn:hover{border-color:var(--main);background:rgba(226,184,102,.12);color:#f1d797}
+.btn.primary{border-color:var(--main);background:var(--main);color:#171711}
+.btn.primary:hover{background:#efd08a;transform:translateY(-1px)}
+.grid{gap:12px;margin-bottom:20px}
+.card{border-color:#2a3938;border-radius:5px;background:linear-gradient(145deg,#172120,#11191a);box-shadow:inset 0 1px rgba(255,255,255,.025)}
+.stat{color:#9aa9a2;letter-spacing:.3px}
+.number{color:#f2f4ed;font-size:29px;font-weight:700}
+.section{border:1px solid #2b3937;border-radius:5px;background:rgba(17,25,27,.96);box-shadow:0 12px 30px rgba(0,0,0,.16)}
+.sectionhead{min-height:50px;padding:13px 16px;border-color:#2b3937;background:#172120}
+.sectionhead h2{color:#eaf0e9;font-size:15px;letter-spacing:.2px}
+table{font-size:13px}
+th{padding:11px 14px;background:#121a1b;color:#8d9f98;font-size:10px;letter-spacing:1px}
+td{padding:11px 14px;border-color:rgba(55,73,68,.7)}
+tbody tr:nth-child(even){background:rgba(255,255,255,.012)}
+tbody tr:hover{background:rgba(121,214,173,.055)}
+.team-card{border-color:#30413c;border-radius:5px;background:#182321;transition:transform .16s,border-color .16s,background .16s}
+.team-card:hover,.team-card.selected{transform:translateY(-2px);border-color:#c5a55d;background:#202c26;box-shadow:inset 3px 0 var(--main)}
+.team-profile__header,.team-profile__body .panel{border-radius:4px;border-color:#31413d;background:#172220}
+.point-pill,.badge{border-radius:3px}
+.point-pill{border-color:rgba(121,214,173,.32);background:rgba(121,214,173,.1);color:#9ce4bd}
+.field input,.field select{border-color:#344541;border-radius:4px;background:#0d1516;color:#edf3ef}
+.field input:focus,.field select:focus{outline:2px solid rgba(121,214,173,.25);border-color:var(--good)}
+.cloud-card{border-radius:6px;background:#172120;border-color:#344540;box-shadow:0 22px 80px rgba(0,0,0,.42)}
+.cloud-card h1{color:#f0f4ef}
+.cloud-actions button,.cloud-account button,.cloud-import button{border-radius:4px}
+.player-profile__header{border-color:var(--line);background:#172220}
+.player-profile__stats .card{border-radius:4px;background:#141e1d}
+.player-honors{background:#131d1b}
+.free-agent-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 16px}
+.free-agent-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:10px 12px;border:1px solid #344541;border-radius:4px;background:#16201e}
+.free-agent-row .player-open{grid-column:1/-1}
+.free-agent-row>span{color:var(--muted);font-size:12px}
+.bracket-board-wrap{border-color:#30413c;border-radius:4px;background:#0d1415}
+.bracket-match{border-color:#30413c;border-radius:4px;background:#182321}
+.bracket-round h3{border-radius:3px;background:#202b27;color:#9aac9f}
+.bracket-match.is-complete{border-left-color:var(--good)}
+.match-detail__header,.match-detail__section,.map-card{border-color:#30413c;border-radius:4px;background:#172220}
+.match-type{border-radius:3px}
+.fixture-actions button{border-color:#394a43;border-radius:3px}
+.fixture-actions button:hover{border-color:var(--main);color:var(--main)}
+.site-credit{color:#708079;font-size:14px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--main);outline-offset:2px}
+@media(max-width:1000px){.main{padding:24px}.free-agent-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:800px){.side{width:68px;padding:15px 7px}.main{padding:20px 16px}.brand{padding:8px}.brand::after{display:none}}
+@media(max-width:560px){.main{padding:17px 10px}.top .title{font-size:27px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.free-agent-list{grid-template-columns:1fr}.free-agent-row{grid-template-columns:1fr auto}}
+.country-flag{display:inline-block;width:24px;height:18px;flex:0 0 24px;object-fit:cover;vertical-align:middle;border:1px solid rgba(255,255,255,.16);border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.country-flag-missing{display:inline-flex;width:24px;height:18px;flex:0 0 24px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:2px;color:var(--muted);font-size:10px;vertical-align:middle}
+.player-profile__identity>.sub{display:flex;align-items:center;gap:9px}
+.player-profile__stats{grid-template-columns:repeat(5,minmax(0,1fr))}
+.impact-score{display:inline-flex;min-width:38px;justify-content:center;padding:4px 7px;border:1px solid currentColor;border-radius:3px;font-weight:700;font-variant-numeric:tabular-nums}
+.impact-score--high{color:#8fe0b6;background:rgba(121,214,173,.08)}
+.impact-score--mid{color:#e2bd6e;background:rgba(226,184,102,.08)}
+.impact-score--low{color:#d78982;background:rgba(236,119,119,.08)}
+.impact-card .number{display:flex;align-items:baseline;gap:5px}
+.impact-card .number small{color:var(--muted);font-size:13px;font-weight:500}
+.impact-meter{height:5px;margin-top:10px;overflow:hidden;border-radius:4px;background:#2a3938}
+.impact-meter span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#d78073,#dfbd69 58%,#7bd5a8)}
+.impact-caption{margin-top:7px;color:var(--muted);font-size:11px}
+@media(max-width:700px){.player-profile__stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.transfer-team{display:inline-flex;align-items:center;gap:10px;min-width:132px;color:var(--text);font-size:14px;font-weight:700;white-space:nowrap}
+.transfer-team__logo{width:44px;height:44px;flex:0 0 44px;padding:3px;border-radius:4px;background:#11191a}
+.transfer-route{display:inline-flex;align-items:center;gap:9px;flex-wrap:wrap}
+.transfer-route .transfer-team{min-width:0;font-size:12px}
+.transfer-route .transfer-team__logo,.team-transfers .transfer-team__logo{width:26px;height:26px;flex-basis:26px;padding:2px}
+.transfer-route__arrow{color:var(--good);font-size:17px;font-weight:700}
+#transferMarket .section{overflow-x:auto}
+#transferMarket table{min-width:1040px;table-layout:auto}
+#transferMarket th,#transferMarket td{vertical-align:middle}
+#transferMarket th:last-child,#transferMarket td:last-child{text-align:center;white-space:nowrap}
+#transferMarket td:nth-child(3),#transferMarket td:nth-child(4){min-width:160px}
+</style>
+</html>
